@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Kulim+Park:ital,wght@0,200;0,300;0,400;0,600;0,700;1,200;1,300;1,400;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Khula:wght@300;400;600;700;800&display=swap");
+
+:root {
+    --font-kulim-park: "Kulim Park", sans-serif;
+    --font-khula: "Khula", sans-serif;
+    --main-color: #00104a;
+    --text-white: #ffffff;
+    --text-black: #000000;
+    --text-red: #e10909;
+    --shadow-left: 5px 0px 5px rgba(0, 0, 0, 0.1);
+    --shadow-right: -5px 0 3px rgba(0, 0, 0, 0.1);
+    --shadow-bottom: 0 5px 2px rgba(0, 0, 0, 0.1);
+    --shadow-custom: 3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.font-kulim-park {
+    font-family: var(--font-kulim-park);
+}
+
+.font-khula {
+    font-family: var(--font-khula);
+}

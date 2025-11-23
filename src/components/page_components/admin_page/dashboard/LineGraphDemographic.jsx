@@ -1,0 +1,72 @@
+import { Calendar } from "lucide-react";
+import { StackedBarChartComponent } from "@/components/ui";
+import { useGetUsageOverTime } from "@/hooks/dashboard";
+import { useState, useEffect, useMemo } from "react";
+
+export const LineGraphDemographic = () => {
+	const [timeFrame, setTimeFrame] = useState("daily");
+	const [location, setLocation] = useState("outside");
+
+	const { data, isLoading, error } = useGetUsageOverTime({
+		location: location,
+		time_frame: timeFrame,
+	});
+
+	const usageOverTimeData = useMemo(() => data?.data || [], [data]);
+
+	useEffect(() => {
+		console.log('usageOverTimeData', usageOverTimeData);
+	}, [usageOverTimeData]);
+
+	return (
+		<>
+			<div>
+				<h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Demographics - User Overtime</h2>
+				<div className="flex items-center justify-between gap-4">
+					<p className="text-3xl font-kulim-park text-gray-600 mt-1">Age</p>
+					<div className="flex items-center gap-3">
+						<div className="relative">
+							<select
+								className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+								defaultValue={location}
+								onChange={(e) => setLocation(e.target.value)}
+							>
+								<option value="outside">Internet Access</option>
+								<option value="1st_floor">1st floor</option>
+								<option value="2nd_floor">2nd floor</option>
+								<option value="3rd_floor">3rd floor</option>
+								<option value="all_locations">All Locations</option>
+							</select>
+						</div>
+						<div className="relative">
+							<Calendar className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" />
+							<select
+								className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+								defaultValue={timeFrame}
+								onChange={(e) => setTimeFrame(e.target.value)}
+							>
+								<option value="daily">Daily</option>
+								<option value="weekly">Weekly</option>
+								<option value="monthly">Monthly</option>
+								<option value="yearly">Yearly</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="h-96 mt-3">
+				{isLoading ? (
+					<div className="flex items-center justify-center h-full">
+						<p className="text-gray-500 text-xl">Loading...</p>
+					</div>
+				) : error ? (
+					<div className="flex items-center justify-center h-full">
+						<p className="text-red-500 text-xl">{error?.message || "Something went wrong"}</p>
+					</div>
+				) : (
+					<StackedBarChartComponent data={usageOverTimeData} height={320} timeFrame={timeFrame} />
+				)}
+			</div>
+		</>
+	);
+};
