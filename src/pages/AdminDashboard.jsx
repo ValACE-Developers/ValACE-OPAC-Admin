@@ -1,6 +1,6 @@
 import { useDashboardStats, useGetVisitorCount } from "../hooks/dashboard";
 import { useMemo, useState } from "react";
-import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, LineGraphDemographic, BarGraphDemographic, PieChartDemographic, DemographicCard } from "@/components/page_components/admin_page/dashboard";
+import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, LineGraphDemographic, BarGraphDemographic, PieChartDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/admin_page/dashboard";
 import { UserIcon, Users, MapPin, Calendar } from "lucide-react";
 
 export const AdminDashboard = () => {
@@ -227,7 +227,7 @@ export const AdminDashboard = () => {
             </section>
 
             <section className="mt-8">
-                <LineGraphDemographic />
+                <UsageOverTimeDemographic />
             </section>
 
             <section className="mt-8 grid grid-cols-1 lg:grid-cols-8 gap-4 items-start">

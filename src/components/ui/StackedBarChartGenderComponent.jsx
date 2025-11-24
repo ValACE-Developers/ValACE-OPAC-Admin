@@ -1,34 +1,26 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Sample data for demonstration - realistic library usage patterns
-const sampleData = [
-    { date: '2025-01-01', '0-12': 12, '13-21': 45, '22-35': 68, '36-59': 34, '60+': 8 },
-    { date: '2025-01-02', '0-12': 18, '13-21': 52, '22-35': 72, '36-59': 38, '60+': 11 },
-    { date: '2025-01-03', '0-12': 25, '13-21': 58, '22-35': 85, '36-59': 42, '60+': 14 },
-    { date: '2025-01-04', '0-12': 22, '13-21': 48, '22-35': 78, '36-59': 36, '60+': 9 },
-    { date: '2025-01-05', '0-12': 8, '13-21': 28, '22-35': 45, '36-59': 22, '60+': 6 },
-    { date: '2025-01-06', '0-12': 15, '13-21': 62, '22-35': 91, '36-59': 48, '60+': 15 },
-    { date: '2025-01-07', '0-12': 28, '13-21': 72, '22-35': 95, '36-59': 52, '60+': 18 },
-    { date: '2025-01-08', '0-12': 30, '13-21': 68, '22-35': 88, '36-59': 45, '60+': 16 },
-    { date: '2025-01-09', '0-12': 26, '13-21': 64, '22-35': 82, '36-59': 41, '60+': 13 },
-    { date: '2025-01-10', '0-12': 20, '13-21': 55, '22-35': 75, '36-59': 38, '60+': 12 },
-    { date: '2025-01-11', '0-12': 14, '13-21': 42, '22-35': 65, '36-59': 32, '60+': 9 },
-    { date: '2025-01-12', '0-12': 10, '13-21': 32, '22-35': 48, '36-59': 24, '60+': 7 },
-    { date: '2025-01-13', '0-12': 24, '13-21': 66, '22-35': 89, '36-59': 46, '60+': 17 },
-    { date: '2025-01-14', '0-12': 32, '13-21': 78, '22-35': 98, '36-59': 55, '60+': 20 },
-];
-
 const AGE_GROUPS = ['0-12', '13-21', '22-35', '36-59', '60+'];
 
-const AGE_GROUP_COLORS = {
-    '0-12': '#8b5cf6',    // Purple
-    '13-21': '#3b82f6',   // Blue
-    '22-35': '#10b981',   // Green
-    '36-59': '#f59e0b',   // Orange
-    '60+': '#ef4444',     // Red
+// Blue shades for male (from light to dark)
+const MALE_COLORS = {
+    '0-12': '#93c5fd',    // Light blue
+    '13-21': '#60a5fa',   // Sky blue
+    '22-35': '#3b82f6',   // Blue
+    '36-59': '#2563eb',   // Dark blue
+    '60+': '#1e40af',     // Darker blue
 };
 
-export const StackedBarChartComponent = ({ data, height = 300, timeFrame = 'daily' }) => {
+// Red shades for female (from light to dark)
+const FEMALE_COLORS = {
+    '0-12': '#fca5a5',    // Light red
+    '13-21': '#f87171',   // Rose red
+    '22-35': '#ef4444',   // Red
+    '36-59': '#dc2626',   // Dark red
+    '60+': '#b91c1c',     // Darker red
+};
+
+export const StackedBarChartGenderComponent = ({ data, height = 300, timeFrame = 'daily' }) => {
     const formatTime = (hour) => {
         const h = parseInt(hour);
         if (h === 0) return '12 AM';
@@ -84,40 +76,37 @@ export const StackedBarChartComponent = ({ data, height = 300, timeFrame = 'dail
     };
 
     const transformData = (rawData) => {
-        if (!rawData || rawData.length === 0) return sampleData;
+        if (!rawData || rawData.length === 0) return [];
         
-        // Check if data is already in the correct format
-        const firstEntry = rawData[0];
-        const hasAgeGroupProperty = firstEntry && 'age_group' in firstEntry;
-        
-        // If data already has age group keys, return as is
-        if (!hasAgeGroupProperty && firstEntry && AGE_GROUPS.some(group => group in firstEntry)) {
-            return rawData;
-        }
-        
-        // API format: [{ date, age_group, count }]
-        // Transform to: [{ date, '0-12': count, '13-21': count, '22-35': count, '36-59': count, '60+': count }]
-        
+        // Group by date and separate male/female data
         const grouped = {};
         
         rawData.forEach(entry => {
-            const key = entry.date;
+            const dateKey = entry.date;
             
-            if (!grouped[key]) {
-                grouped[key] = {
+            if (!grouped[dateKey]) {
+                grouped[dateKey] = {
                     date: entry.date,
-                    '0-12': 0,
-                    '13-21': 0,
-                    '22-35': 0,
-                    '36-59': 0,
-                    '60+': 0
+                    'Male 0-12': 0,
+                    'Male 13-21': 0,
+                    'Male 22-35': 0,
+                    'Male 36-59': 0,
+                    'Male 60+': 0,
+                    'Female 0-12': 0,
+                    'Female 13-21': 0,
+                    'Female 22-35': 0,
+                    'Female 36-59': 0,
+                    'Female 60+': 0,
                 };
             }
             
-            // Map age_group to proper key
-            if (entry.age_group && AGE_GROUPS.includes(entry.age_group)) {
-                grouped[key][entry.age_group] = entry.count || 0;
-            }
+            const prefix = entry.gender === 'male' ? 'Male' : 'Female';
+            
+            // Map age groups with gender prefix
+            AGE_GROUPS.forEach(ageGroup => {
+                const dataKey = `${prefix} ${ageGroup}`;
+                grouped[dateKey][dataKey] = entry[ageGroup] || 0;
+            });
         });
         
         return Object.values(grouped);
@@ -147,6 +136,7 @@ export const StackedBarChartComponent = ({ data, height = 300, timeFrame = 'dail
                 <YAxis 
                     tick={{ fontSize: 16 }} 
                     width={70}
+                    allowDecimals={false}
                     label={{ value: 'Count', angle: -90, position: 'insideLeft', style: { fontSize: 16 } }}
                 />
                 <Tooltip 
@@ -158,13 +148,25 @@ export const StackedBarChartComponent = ({ data, height = 300, timeFrame = 'dail
                     verticalAlign="top" 
                     align="right" 
                     wrapperStyle={{ fontSize: 16 }} 
+                    iconSize={18}
                 />
+                {/* Male bars (blue shades) */}
+                {AGE_GROUPS.map((ageGroup, index) => (
+                    <Bar 
+                        key={`male-${ageGroup}`}
+                        dataKey={`Male ${ageGroup}`}
+                        stackId="a"
+                        fill={MALE_COLORS[ageGroup]} 
+                        radius={index === AGE_GROUPS.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                    />
+                ))}
+                {/* Female bars (red shades) */}
                 {AGE_GROUPS.map((ageGroup) => (
                     <Bar 
-                        key={ageGroup}
-                        dataKey={ageGroup} 
-                        stackId="a"
-                        fill={AGE_GROUP_COLORS[ageGroup]} 
+                        key={`female-${ageGroup}`}
+                        dataKey={`Female ${ageGroup}`}
+                        stackId="b"
+                        fill={FEMALE_COLORS[ageGroup]} 
                         radius={ageGroup === '60+' ? [4, 4, 0, 0] : [0, 0, 0, 0]}
                     />
                 ))}
