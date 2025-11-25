@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     const login = async (credentials) => {
-        const isTestMode = import.meta.env.MODE === "development" && import.meta.env.VITE_TEST_MODE === "true";
+        const isTestMode = import.meta.env.VITE_ENVIRONMENT === "development" && import.meta.env.VITE_TEST_MODE === "true";
 
         if (isTestMode) {
             console.warn("[TEST MODE] Login bypass active.");

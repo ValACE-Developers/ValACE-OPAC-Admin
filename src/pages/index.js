@@ -11,3 +11,4 @@ export { CreateApiResourcePage } from "./CreateApiResourcePage";
 export { EditApiResourcePage } from "./EditApiResourcePage";
 export { CreateRedirectResourcePage } from "./CreateRedirectResourcePage";
 export { EditRedirectResourcePage } from "./EditRedirectResourcePage";
+export { SystemLogs } from "./SystemLogs";
