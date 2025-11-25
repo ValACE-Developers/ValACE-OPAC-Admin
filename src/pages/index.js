@@ -1,6 +1,6 @@
 export { NotFoundPage } from "./NotFoundPage";
 export { AdminLoginPage } from "./AdminLoginPage";
-export { AdminDashboard } from "./AdminDashboard";
+export { AdminDashboardPage } from "./AdminDashboardPage";
 export { FeaturedBooksPage } from "./FeaturedBooksPage";
 export { LogsPage } from "./LogsPage";
 export { ResourcePage } from "./ResourcePage";

@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { Star, ChevronRight, Plus } from "lucide-react";
 import { ErrorAlert } from "./ErrorAlert";
 import { FeaturedBookCard } from "./FeaturedBookCard";
+import { LoadingState } from "@/components/ui";
 
 export const FeaturedBookSection = ({
     featuredBooks,
@@ -40,27 +41,16 @@ export const FeaturedBookSection = ({
                 {/* Featured Books Error State */}
                 {featuredBooksError && (
                     <ErrorAlert
-                        error={featuredBooksError}
+                        error={featuredBooksError || "Error loading featured books"}
                         title="Failed to load featured books"
-                        description={featuredBooksError.message || 'An error occurred while fetching featured books'}
+                        description={featuredBooksError?.message || 'An error occurred while fetching featured books'}
                     />
                 )}
 
                 {/* Featured Books Loading State */}
                 {isLoadingFeaturedBooks ? (
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-                        {[...Array(6)].map((_, i) => (
-                            <div
-                                key={`loading-skeleton-${i}`}
-                                className="rounded-md overflow-hidden bg-white flex flex-col items-center relative"
-                            >
-                                <div className="w-[150px] h-[200px] bg-gray-200 animate-pulse"></div>
-                                <div className="p-3 w-full text-center">
-                                    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse mb-2 mx-auto"></div>
-                                    <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse mx-auto"></div>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="flex items-center justify-center h-64">
+                        <p className="text-gray-500 text-xl">Loading...</p>
                     </div>
                 ) : displayedBooks.length > 0 ? (
                     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">

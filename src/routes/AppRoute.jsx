@@ -8,7 +8,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { 
     NotFoundPage, 
     AdminLoginPage,
-    AdminDashboard,
+    AdminDashboardPage,
     FeaturedBooksPage,
     ResourcePage,
     ExternalResourcePage,
@@ -53,7 +53,7 @@ const AppRoute = () => {
                 <Route path="/admin/*" element={<ProtectedRoute />}>
                     <Route element={<AdminLayout />}>
                         <Route index element={<Navigate to="/admin/dashboard" replace />} />
-                        <Route path="dashboard" element={<AdminDashboard />} />
+                        <Route path="dashboard" element={<AdminDashboardPage />} />
                         {/* <Route path="resources" element={<ResourcePage />} />
                         <Route path="resources/choose" element={<ChooseResourceTypePage />} />
                         <Route path="resources/create/api" element={<CreateApiResourcePage />} />

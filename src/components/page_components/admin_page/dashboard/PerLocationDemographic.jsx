@@ -53,31 +53,34 @@ export const PerLocationDemographic = () => {
 
     return (
         <>
-            <div className="">
-                <h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Demographics - Per Location</h2>
-                <div className="mt-3">
+            <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold font-khula text-[#00104A]">Demographics - Per Location</h2>
+                <div>
                     <div className="flex items-center gap-2 w-full">
-                        <div className="relative flex-1">            
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">From Date</span>
                             <input
                                 type="date"
                                 value={fromDate || ""}
                                 onChange={(e) => setFromDate(e.target.value)}
-                                className="px-3 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00104A]/30 w-full"
+                                className="px-2 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00104A]/30 w-full"
                             />
                         </div>
                         <span className="text-gray-500">-</span>
-                        <div className="relative flex-1">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
                             <input
                                 type="date"
                                 value={toDate || ""}
                                 onChange={(e) => setToDate(e.target.value)}
-                                className="px-3 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00104A]/30 w-full"
+                                className="px-2 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00104A]/30 w-full"
                             />
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center justify-between gap-8">
-                    <div className="mt-4 flex-1">
+            </div>
+            <div className="flex items-center justify-between gap-8">
+                <div className="mt-4 flex-1">
                     {isLoading ? (
                         <div className="flex items-center justify-center h-64">
                             <p className="text-gray-500 text-xl">Loading...</p>
@@ -104,7 +107,6 @@ export const PerLocationDemographic = () => {
                             <span className="text-gray-700 font-kulim-park text-lg">{item.name}</span>
                         </div>
                     ))}
-                </div>
                 </div>
             </div>
         </>

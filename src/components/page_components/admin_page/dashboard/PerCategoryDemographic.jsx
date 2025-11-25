@@ -36,9 +36,10 @@ export const PerCategoryDemographic = () => {
                 <div className="flex items-center justify-between gap-4">
                     <p className="text-3xl font-kulim-park text-gray-600 mt-1">Category</p>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
                             <select
-                                className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             >
@@ -50,12 +51,13 @@ export const PerCategoryDemographic = () => {
 
                             </select>
                         </div>
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Date</span>
                             <input
                                 type="date"
                                 value={date || ""}
                                 onChange={(e) => setDate(e.target.value)}
-                                className="py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                             />
                         </div>
                     </div>
@@ -67,10 +69,10 @@ export const PerCategoryDemographic = () => {
                         <p className="text-gray-500 text-xl">Loading...</p>
                     </div>
                 ) : error ? (
-					<div className="flex items-center justify-center h-full">
-						<p className="text-red-500 text-xl">{error?.message || "Something went wrong"}</p>
-					</div>
-				): !date ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-red-500 text-xl">{error?.message || "Something went wrong"}</p>
+                    </div>
+                ) : !date ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Please select a date to view data</p>
                     </div>

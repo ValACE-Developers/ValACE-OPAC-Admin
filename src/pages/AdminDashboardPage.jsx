@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, PerCategoryDemographic, PerLocationDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/admin_page/dashboard";
 import { UserIcon, Users, Calendar } from "lucide-react";
 
-export const AdminDashboard = () => {
+export const AdminDashboardPage = () => {
     // State for visitor count filters
     const [location, setLocation] = useState('outside');
     const [timeFrame, setTimeFrame] = useState('today');
@@ -108,7 +108,7 @@ export const AdminDashboard = () => {
             )}
 
             {/* Stats Grid */}
-            <section className="mt-8">
+            <section className="my-14">
                 <h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Resources</h2>
                 <StatsGrid
                     resourceMetrics={resourceMetrics}
@@ -117,13 +117,14 @@ export const AdminDashboard = () => {
             </section>
 
             {/* Demographic Data Section */}
-            <section className="mt-8">
+            <section className="my-14">
                 <div className="flex items-center justify-between">
                     <h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Demographics - No. of Visitors</h2>
                     <div className="ml-auto w-fit flex items-center gap-3 mb-4">
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
                             <select
-                                className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                                 value={location}
                                 onChange={handleLocationChange}
                             >
@@ -134,19 +135,22 @@ export const AdminDashboard = () => {
                                 <option value="all_locations">All Locations</option>
                             </select>
                         </div>
-                        <div className="relative">
-                            <Calendar className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <select
-                                className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
-                                value={timeFrame}
-                                onChange={handleTimeFrameChange}
-                            >
-                                <option value="today">Today</option>
-                                <option value="this_week">This Week</option>
-                                <option value="this_month">This Month</option>
-                                <option value="this_year">This Year</option>
-                                <option value="all_time">All Time</option>
-                            </select>
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Time Frame</span>
+                            <div className="relative">
+                                <Calendar className="w-6 h-6 text-[#00104A] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                <select
+                                    className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                    value={timeFrame}
+                                    onChange={handleTimeFrameChange}
+                                >
+                                    <option value="today">Today</option>
+                                    <option value="this_week">This Week</option>
+                                    <option value="this_month">This Month</option>
+                                    <option value="this_year">This Year</option>
+                                    <option value="all_time">All Time</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,20 +233,20 @@ export const AdminDashboard = () => {
                 </div>
             </section>
 
-            <section className="mt-8">
+            <section className="my-14">
                 <UsageOverTimeDemographic />
             </section>
 
-            <section className="mt-8">
+            <section className="my-14">
                 <PerCategoryDemographic />
             </section>
 
-            <section className="mt-8">
+            <section className="my-14">
                 <PerLocationDemographic />
             </section>
 
             {/* Featured Books Section */}
-            <section className="mt-8">
+            <section className="my-14">
                 <FeaturedBookSection
                     featuredBooks={resourceMetrics.featured_books}
                     isLoadingFeaturedBooks={isLoadingDashboardStats}
@@ -253,4 +257,4 @@ export const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default AdminDashboardPage;
