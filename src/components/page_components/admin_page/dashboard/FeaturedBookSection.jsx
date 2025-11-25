@@ -19,15 +19,10 @@ export const FeaturedBookSection = ({
 
     return (
         <section className="mt-8">
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+            <div className="">
                 <div className="mb-6 flex items-center justify-between">
                     <div>
-                        <h2 className="text-3xl font-khula font-semibold text-gray-900 flex items-center gap-2">
-                            <Star className="w-7 h-7 text-yellow-500" />
-                            <span>
-                                Featured Books
-                            </span>
-                        </h2>
+                        <h2 className="text-3xl font-bold font-khula text-[#00104A]">Featured Books</h2>
                         <p className="text-lg font-kulim-park text-gray-500 mt-1">
                             Currently featured books on the home page
                         </p>

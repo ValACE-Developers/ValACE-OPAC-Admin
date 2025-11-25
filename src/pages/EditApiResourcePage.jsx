@@ -301,7 +301,7 @@ const schema = z.object({
         }),
 });
 
-const EditApiResourcePage = () => {
+export const EditApiResourcePage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const location = useLocation();
@@ -1382,7 +1382,5 @@ const EditApiResourcePage = () => {
         </div>
     );
 };
-
-export default EditApiResourcePage;
 
 

@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { StackedBarChartCategoryGenderComponent } from "@/components/ui";
 import { useGetPerCategoryUsage } from "@/hooks/dashboard";
 
-export const BarGraphDemographic = () => {
+export const PerCategoryDemographic = () => {
 
     // Get today's date in local timezone (YYYY-MM-DD)
     const getTodayLocal = () => {
@@ -61,7 +61,7 @@ export const BarGraphDemographic = () => {
                     </div>
                 </div>
             </div>
-            <div className="h-96 mt-3">
+            <div className="h-auto mt-3">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Loading...</p>
@@ -75,7 +75,7 @@ export const BarGraphDemographic = () => {
                         <p className="text-gray-500 text-xl">Please select a date to view data</p>
                     </div>
                 ) : (
-                    <StackedBarChartCategoryGenderComponent data={chartData} height={320} />
+                    <StackedBarChartCategoryGenderComponent data={chartData} height={500} />
                 )}
             </div>
         </>

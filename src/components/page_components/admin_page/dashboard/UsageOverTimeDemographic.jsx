@@ -39,7 +39,7 @@ export const UsageOverTimeDemographic = () => {
                             </select>
                         </div>
                         <div className="relative">
-                            <Calendar className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <Calendar className="w-6 h-6 text-[#00104A] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                             <select
                                 className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                                 value={timeFrame}
@@ -54,7 +54,7 @@ export const UsageOverTimeDemographic = () => {
                     </div>
                 </div>
             </div>
-            <div className="h-96 mt-3">
+            <div className="h-auto mt-3">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Loading...</p>
@@ -68,7 +68,7 @@ export const UsageOverTimeDemographic = () => {
                         <p className="text-gray-500 text-xl">No data available</p>
                     </div>
                 ) : (
-                    <StackedBarChartGenderComponent data={chartData} height={320} timeFrame={timeFrame} />
+                    <StackedBarChartGenderComponent data={chartData} height={500} timeFrame={timeFrame} />
                 )}
             </div>
         </>
