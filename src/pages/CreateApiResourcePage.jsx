@@ -10,7 +10,7 @@ import {
     MediaSection,
     ApiConfigurationSection,
     EndpointsSection,
-} from '../components/page_components/admin_page/create_api_resource_page/index.js';
+} from '../components/page_components/create_api_resource_page/index.js';
 import {
     ChevronLeft,
     Database,

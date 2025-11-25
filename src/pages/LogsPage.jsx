@@ -5,7 +5,7 @@ import { useErrorLogs } from "../hooks/system-logs/useErrorLogs";
 import { useClearAllLogs } from "../hooks/system-logs/useClearLogs";
 import { FileText, AlertCircle, CheckCircle, Clock, Trash2, AlertTriangle } from "lucide-react";
 import Header from "../components/layout/Header";
-import { LogTab } from "../components/page_components/admin_page/logs_page/index";
+import { LogTab } from "../components/page_components/logs_page/index";
 
 export const LogsPage = () => {
     const [activeTab, setActiveTab] = useState("system");

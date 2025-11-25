@@ -1,6 +1,6 @@
 import { useDashboardStats, useGetVisitorCount } from "@/hooks/dashboard";
 import { useMemo, useState } from "react";
-import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, PerCategoryDemographic, PerLocationDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/admin_page/dashboard";
+import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, PerCategoryDemographic, PerLocationDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/dashboard";
 import { UserIcon, Users, Calendar } from "lucide-react";
 
 export const AdminDashboardPage = () => {
