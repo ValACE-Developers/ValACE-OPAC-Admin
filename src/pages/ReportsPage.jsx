@@ -224,10 +224,10 @@ export const ReportsPage = () => {
                     <div className="flex justify-between items-start">
                         <div>
                             <h1 className="text-5xl font-khula font-bold text-[var(--main-color)] mb-2">
-                                Dashboard
+                                Reports
                             </h1>
                             <p className="text-lg font-kulim-park text-gray-600">
-                                View an overview of key metrics and manage system components in one place.
+                                View an overview of reports based on selected filters.
                             </p>
                         </div>
                     </div>
