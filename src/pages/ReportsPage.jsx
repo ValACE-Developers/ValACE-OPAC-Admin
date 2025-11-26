@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Send, Upload, ChevronUp, ChevronDown } from "lucide-react";
 import { EntriesDropdown } from "../components/ui/EntriesDropdown";
+import { Header } from "../components/layout/Header";
 
 // NOTE: THIS IS UI ONLY
 // TO DO: Correct Data, Correct Filter
@@ -152,19 +153,19 @@ export const ReportsPage = () => {
             total: 92
         }
     ];
-    
+
     const [reportData, setReportData] = useState([]);
     const totalData = reportData.length;
 
     const handleFilter = () => {
         // Filter logic
         let filtered = [...allReportData];
-        
+
         // Filter by category
         if (category !== "All") {
             filtered = filtered.filter(item => item.category === category);
         }
-        
+
         // Filter by date range
         if (fromDate) {
             filtered = filtered.filter(item => item.date >= fromDate);
@@ -172,7 +173,7 @@ export const ReportsPage = () => {
         if (toDate) {
             filtered = filtered.filter(item => item.date <= toDate);
         }
-        
+
         setReportData(filtered);
         setIsFiltered(true);
         setPage(1);
@@ -220,18 +221,10 @@ export const ReportsPage = () => {
                 {/* <Breadcrumb items={[{ label: "Report", isCurrent: true }]} /> */}
 
                 {/* Header */}
-                <header className="mb-8">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h1 className="text-5xl font-khula font-bold text-[var(--main-color)] mb-2">
-                                Reports
-                            </h1>
-                            <p className="text-lg font-kulim-park text-gray-600">
-                                View an overview of reports based on selected filters.
-                            </p>
-                        </div>
-                    </div>
-                </header>
+                <Header
+                    title="Reports"
+                    description="View an overview of reports based on selected filters."
+                />
 
                 {/* Filters and Actions */}
                 <div>
