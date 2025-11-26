@@ -1,9 +1,9 @@
-import { useDashboardStats, useGetVisitorCount } from "../hooks/dashboard";
+import { useDashboardStats, useGetVisitorCount } from "@/hooks/dashboard";
 import { useMemo, useState } from "react";
-import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, LineGraphDemographic, BarGraphDemographic, PieChartDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/admin_page/dashboard";
-import { UserIcon, Users, MapPin, Calendar } from "lucide-react";
+import { DashboardHeader, ErrorAlert, FeaturedBookSection, StatsGrid, PerCategoryDemographic, PerLocationDemographic, DemographicCard, UsageOverTimeDemographic } from "@/components/page_components/admin_page/dashboard";
+import { UserIcon, Users, Calendar } from "lucide-react";
 
-export const AdminDashboard = () => {
+export const AdminDashboardPage = () => {
     // State for visitor count filters
     const [location, setLocation] = useState('outside');
     const [timeFrame, setTimeFrame] = useState('today');
@@ -15,11 +15,11 @@ export const AdminDashboard = () => {
         error: dashboardStatsError,
     } = useDashboardStats();
 
-    const { 
-        data: visitorCountData, 
-        isLoading: isLoadingVisitorCount, 
-        error: visitorCountError 
-} = useGetVisitorCount({ location, time_frame: timeFrame });
+    const {
+        data: visitorCountData,
+        isLoading: isLoadingVisitorCount,
+        error: visitorCountError
+    } = useGetVisitorCount({ location, time_frame: timeFrame });
 
     // Calculate resource metrics from dashboard stats or fallback to resources data
     const resourceMetrics = useMemo(() => {
@@ -108,7 +108,8 @@ export const AdminDashboard = () => {
             )}
 
             {/* Stats Grid */}
-            <section className="mt-8">
+            <section className="my-14">
+                <h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Resources</h2>
                 <StatsGrid
                     resourceMetrics={resourceMetrics}
                     isLoadingResources={isLoadingDashboardStats}
@@ -116,109 +117,115 @@ export const AdminDashboard = () => {
             </section>
 
             {/* Demographic Data Section */}
-            <section className="mt-8">
-                <div className="ml-auto w-fit flex items-center gap-3 mb-4">
-                    <div className="relative">
-                        {/* <MapPin className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" /> */}
-                        <select
-                            className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
-                            value={location}
-                            onChange={handleLocationChange}
-                        >
-                            <option value="outside">Internet Access</option>
-                            <option value="1st_floor">1st Floor</option>
-                            <option value="2nd_floor">2nd Floor</option>
-                            <option value="3rd_floor">3rd Floor</option>
-                            <option value="all_locations">All Locations</option>
-                        </select>
-                    </div>
-                    <div className="relative">
-                        <Calendar className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <select
-                            className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
-                            value={timeFrame}
-                            onChange={handleTimeFrameChange}
-                        >
-                            <option value="today">Today</option>
-                            <option value="this_week">This Week</option>
-                            <option value="this_month">This Month</option>
-                            <option value="this_year">This Year</option>
-                            <option value="all_time">All Time</option>
-                        </select>
+            <section className="my-14">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-3xl font-bold font-khula text-[#00104A] mb-6">Demographics - No. of Visitors</h2>
+                    <div className="ml-auto w-fit flex items-center gap-3 mb-4">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
+                            <select
+                                className="px-2 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                value={location}
+                                onChange={handleLocationChange}
+                            >
+                                <option value="outside">Internet Access</option>
+                                <option value="1st_floor">1st Floor</option>
+                                <option value="2nd_floor">2nd Floor</option>
+                                <option value="3rd_floor">3rd Floor</option>
+                                <option value="all_locations">All Locations</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Time Frame</span>
+                            <div className="relative">
+                                <Calendar className="w-6 h-6 text-[#00104A] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                <select
+                                    className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                    value={timeFrame}
+                                    onChange={handleTimeFrameChange}
+                                >
+                                    <option value="today">Today</option>
+                                    <option value="this_week">This Week</option>
+                                    <option value="this_month">This Month</option>
+                                    <option value="this_year">This Year</option>
+                                    <option value="all_time">All Time</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <DemographicCard 
-                            title="Total Visitors" 
-                            value={visitorCounts.total_visitors} 
-                            Icon={Users} 
-                            bgColor="bg-[#00104A]" 
-                            borderColor="border-[#00104A]" 
-                            textColor="text-white" 
+                        <DemographicCard
+                            title="Total Visitors"
+                            value={visitorCounts.total_visitors}
+                            Icon={Users}
+                            bgColor="bg-[#00104A]"
+                            borderColor="border-[#00104A]"
+                            textColor="text-white"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="Male Visitors" 
-                            value={visitorCounts.male_visitors} 
-                            Icon={UserIcon} 
-                            bgColor="bg-[#3b82f6]" 
-                            borderColor="border-[#3b82f6]" 
-                            textColor="text-white" 
+                        <DemographicCard
+                            title="Male Visitors"
+                            value={visitorCounts.male_visitors}
+                            Icon={UserIcon}
+                            bgColor="bg-[#3b82f6]"
+                            borderColor="border-[#3b82f6]"
+                            textColor="text-white"
                             iconColor="text-[#1A78B3]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="Female Visitors" 
-                            value={visitorCounts.female_visitors} 
-                            Icon={UserIcon} 
-                            bgColor="bg-[#ef4444]" 
-                            borderColor="border-[#ef4444]" 
-                            textColor="text-white" 
+                        <DemographicCard
+                            title="Female Visitors"
+                            value={visitorCounts.female_visitors}
+                            Icon={UserIcon}
+                            bgColor="bg-[#ef4444]"
+                            borderColor="border-[#ef4444]"
+                            textColor="text-white"
                             iconColor="text-[#D04949]"
                             isLoading={isLoadingVisitorCount}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                        <DemographicCard 
-                            title="Valenzuela City Library Resources" 
-                            value={visitorCounts.resource_visits.vcl_resource} 
-                            borderColor="border-gray-200" 
-                            textColor="text-gray-900" 
+                        <DemographicCard
+                            title="Valenzuela City Library Resources"
+                            value={visitorCounts.resource_visits.vcl_resource}
+                            borderColor="border-gray-200"
+                            textColor="text-gray-900"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="Featured Books" 
-                            value={visitorCounts.resource_visits.featured_books} 
-                            borderColor="border-gray-200" 
-                            textColor="text-gray-900" 
+                        <DemographicCard
+                            title="Featured Books"
+                            value={visitorCounts.resource_visits.featured_books}
+                            borderColor="border-gray-200"
+                            textColor="text-gray-900"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="NLP Resources" 
-                            value={visitorCounts.resource_visits.nlp_resource} 
-                            borderColor="border-gray-200" 
-                            textColor="text-gray-900" 
+                        <DemographicCard
+                            title="NLP Resources"
+                            value={visitorCounts.resource_visits.nlp_resource}
+                            borderColor="border-gray-200"
+                            textColor="text-gray-900"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="DOST - STARBOOKS Resources" 
-                            value={visitorCounts.resource_visits.dost_resource} 
-                            borderColor="border-gray-200" 
-                            textColor="text-gray-900" 
+                        <DemographicCard
+                            title="DOST - STARBOOKS Resources"
+                            value={visitorCounts.resource_visits.dost_resource}
+                            borderColor="border-gray-200"
+                            textColor="text-gray-900"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
-                        <DemographicCard 
-                            title="Let's Read Resources" 
-                            value={visitorCounts.resource_visits.lets_read_resource} 
-                            borderColor="border-gray-200" 
-                            textColor="text-gray-900" 
+                        <DemographicCard
+                            title="Let's Read Resources"
+                            value={visitorCounts.resource_visits.lets_read_resource}
+                            borderColor="border-gray-200"
+                            textColor="text-gray-900"
                             iconColor="text-[#8088A4]"
                             isLoading={isLoadingVisitorCount}
                         />
@@ -226,21 +233,20 @@ export const AdminDashboard = () => {
                 </div>
             </section>
 
-            <section className="mt-8">
+            <section className="my-14">
                 <UsageOverTimeDemographic />
             </section>
 
-            <section className="mt-8 grid grid-cols-1 lg:grid-cols-8 gap-4 items-start">
-                <div className="lg:col-span-5">
-                    <BarGraphDemographic />
-                </div>
-                <div className="lg:col-span-3">
-                    <PieChartDemographic />
-                </div>
+            <section className="my-14">
+                <PerCategoryDemographic />
+            </section>
+
+            <section className="my-14">
+                <PerLocationDemographic />
             </section>
 
             {/* Featured Books Section */}
-            <section className="mt-8">
+            <section className="my-14">
                 <FeaturedBookSection
                     featuredBooks={resourceMetrics.featured_books}
                     isLoadingFeaturedBooks={isLoadingDashboardStats}
@@ -251,4 +257,4 @@ export const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default AdminDashboardPage;

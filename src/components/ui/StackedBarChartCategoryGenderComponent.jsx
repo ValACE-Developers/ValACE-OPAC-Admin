@@ -20,16 +20,16 @@ const FEMALE_COLORS = {
     '60+': '#b91c1c',     // Darker red
 };
 
-export const StackedBarChartCategoryGenderComponent = ({ data, height = 300 }) => {
+export const StackedBarChartCategoryGenderComponent = ({ data, height = 500 }) => {
     const transformData = (rawData) => {
         if (!rawData || rawData.length === 0) return [];
-        
+
         // Group by category and separate male/female data
         const grouped = {};
-        
+
         rawData.forEach(entry => {
             const categoryKey = entry.category;
-            
+
             if (!grouped[categoryKey]) {
                 grouped[categoryKey] = {
                     category: entry.category,
@@ -45,16 +45,16 @@ export const StackedBarChartCategoryGenderComponent = ({ data, height = 300 }) =
                     'Female 60+': 0,
                 };
             }
-            
+
             const prefix = entry.gender === 'male' ? 'Male' : 'Female';
-            
+
             // Map age groups with gender prefix
             AGE_GROUPS.forEach(ageGroup => {
                 const dataKey = `${prefix} ${ageGroup}`;
                 grouped[categoryKey][dataKey] = entry[ageGroup] || 0;
             });
         });
-        
+
         return Object.values(grouped);
     };
 
@@ -65,55 +65,53 @@ export const StackedBarChartCategoryGenderComponent = ({ data, height = 300 }) =
             <BarChart
                 data={chartData}
                 margin={{
-                    top: 10,
-                    right: 16,
-                    left: 0,
+                    top: 0,
+                    right: 0,
+                    left: 12,
                     bottom: 0,
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" stroke="#d9dee7" />
-                <XAxis 
-                    dataKey="category" 
+                <XAxis
+                    dataKey="category"
                     interval={0}
-                    angle={-15}
-                    textAnchor="end"
-                    height={100}
-                    tickMargin={8} 
-                    tick={{ fontSize: 14 }} 
+                    textAnchor="middle"
+                    tickMargin={10} 
+                    tick={{ fontSize: 14 }}
                 />
-                <YAxis 
-                    tick={{ fontSize: 16 }} 
-                    width={70}
+                <YAxis
+                    tick={{ fontSize: 14 }}
+                    width={40}
                     allowDecimals={false}
-                    label={{ value: 'Count', angle: -90, position: 'insideLeft', style: { fontSize: 16 } }}
+                    label={{ value: 'Count', angle: -90, position: 'insideLeft', style: { fontSize: 14 } }}
                 />
-                <Tooltip 
-                    contentStyle={{ fontSize: 14 }} 
+                <Tooltip
+                    contentStyle={{ fontSize: 14 }}
                     cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                 />
-                <Legend 
-                    verticalAlign="top" 
-                    align="right" 
-                    wrapperStyle={{ fontSize: 16 }} 
+                <Legend
+                    verticalAlign="top"
+                    align="right"
+                    wrapperStyle={{ fontSize: 16 }}
                     iconSize={18}
                 />
                 {/* Male bars (blue shades) */}
                 {AGE_GROUPS.map((ageGroup, index) => (
-                    <Bar 
+                    <Bar
                         key={`male-${ageGroup}`}
                         dataKey={`Male ${ageGroup}`}
                         stackId="a"
-                        fill={MALE_COLORS[ageGroup]} 
+                        fill={MALE_COLORS[ageGroup]}
                         radius={index === AGE_GROUPS.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
                     />
                 ))}
                 {/* Female bars (red shades) */}
                 {AGE_GROUPS.map((ageGroup) => (
-                    <Bar 
+                    <Bar
                         key={`female-${ageGroup}`}
                         dataKey={`Female ${ageGroup}`}
                         stackId="b"
-                        fill={FEMALE_COLORS[ageGroup]} 
+                        fill={FEMALE_COLORS[ageGroup]}
                         radius={ageGroup === '60+' ? [4, 4, 0, 0] : [0, 0, 0, 0]}
                     />
                 ))}

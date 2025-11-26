@@ -25,9 +25,10 @@ export const UsageOverTimeDemographic = () => {
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                     <p className="text-3xl font-kulim-park text-gray-600 mt-1">Age</p>
                     <div className="flex flex-wrap items-center gap-3">
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
                             <select
-                                className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             >
@@ -38,23 +39,26 @@ export const UsageOverTimeDemographic = () => {
                                 <option value="all_locations">All Locations</option>
                             </select>
                         </div>
-                        <div className="relative">
-                            <Calendar className="w-8 h-8 text-[#00104A] absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <select
-                                className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
-                                value={timeFrame}
-                                onChange={(e) => setTimeFrame(e.target.value)}
-                            >
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
-                            </select>
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Time Frame</span>
+                            <div className="relative">
+                                <Calendar className="w-6 h-6 text-[#00104A] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                <select
+                                    className="pl-10 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                    value={timeFrame}
+                                    onChange={(e) => setTimeFrame(e.target.value)}
+                                >
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="h-96 mt-3">
+            <div className="h-auto mt-3">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Loading...</p>
@@ -68,7 +72,7 @@ export const UsageOverTimeDemographic = () => {
                         <p className="text-gray-500 text-xl">No data available</p>
                     </div>
                 ) : (
-                    <StackedBarChartGenderComponent data={chartData} height={320} timeFrame={timeFrame} />
+                    <StackedBarChartGenderComponent data={chartData} height={500} timeFrame={timeFrame} />
                 )}
             </div>
         </>

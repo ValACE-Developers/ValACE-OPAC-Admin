@@ -433,8 +433,6 @@ export const FeaturedBooksPage = () => {
     );
 };
 
-export default FeaturedBooksPage;
-
 // Book Selection controls bound to server pagination
 const BookSelectionControls = ({
     books,

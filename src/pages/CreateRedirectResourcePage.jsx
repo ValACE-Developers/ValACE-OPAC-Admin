@@ -16,7 +16,7 @@ import {
     CircleX,
 } from "lucide-react";
 
-const CreateRedirectResourcePage = () => {
+export const CreateRedirectResourcePage = () => {
     const navigate = useNavigate();
     const { success, error, notifications, removeNotification } =
         useNotification();
@@ -465,5 +465,3 @@ const CreateRedirectResourcePage = () => {
         </div>
     );
 };
-
-export default CreateRedirectResourcePage;

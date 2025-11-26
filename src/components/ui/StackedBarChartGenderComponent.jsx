@@ -20,7 +20,7 @@ const FEMALE_COLORS = {
     '60+': '#b91c1c',     // Darker red
 };
 
-export const StackedBarChartGenderComponent = ({ data, height = 300, timeFrame = 'daily' }) => {
+export const StackedBarChartGenderComponent = ({ data, height = 500, timeFrame = 'daily' }) => {
     const formatTime = (hour) => {
         const h = parseInt(hour);
         if (h === 0) return '12 AM';
@@ -119,25 +119,26 @@ export const StackedBarChartGenderComponent = ({ data, height = 300, timeFrame =
             <BarChart
                 data={chartData}
                 margin={{
-                    top: 10,
-                    right: 16,
-                    left: 0,
+                    top: 0,
+                    right: 0,
+                    left: 12,
                     bottom: 0,
                 }}
             >
-                <CartesianGrid strokeDasharray="3 3" stroke="#d9dee7" />
+                <CartesianGrid strokeDasharray="0 0" stroke="#d9dee7" />
                 <XAxis 
                     dataKey="date" 
                     tickFormatter={formatXAxis} 
                     interval="preserveStartEnd" 
-                    tickMargin={8} 
-                    tick={{ fontSize: 16 }} 
+                    tickMargin={10} 
+                    tick={{ fontSize: 14 }} 
+                    textAnchor="middle"
                 />
                 <YAxis 
-                    tick={{ fontSize: 16 }} 
-                    width={70}
+                    tick={{ fontSize: 14 }} 
+                    width={40}
                     allowDecimals={false}
-                    label={{ value: 'Count', angle: -90, position: 'insideLeft', style: { fontSize: 16 } }}
+                    label={{ value: 'Count', angle: -90, position: 'insideLeft', style: { fontSize: 14 } }}
                 />
                 <Tooltip 
                     labelFormatter={(label) => formatXAxis(label)} 
@@ -146,9 +147,10 @@ export const StackedBarChartGenderComponent = ({ data, height = 300, timeFrame =
                 />
                 <Legend 
                     verticalAlign="top" 
-                    align="right" 
-                    wrapperStyle={{ fontSize: 16 }} 
-                    iconSize={18}
+                    align="center" 
+                    wrapperStyle={{ fontSize: 14 }} 
+                    iconSize={12}
+                    iconType="square"
                 />
                 {/* Male bars (blue shades) */}
                 {AGE_GROUPS.map((ageGroup, index) => (

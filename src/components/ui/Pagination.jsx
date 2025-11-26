@@ -4,7 +4,6 @@ import {
     ChevronsLeft,
     ChevronsRight,
 } from "lucide-react";
-import { useMobile } from "@/utils";
 
 export const Pagination = ({
     page,
@@ -23,8 +22,7 @@ export const Pagination = ({
 
     if (totalPages <= 1) return null;
 
-    const isMobile = useMobile();
-    const pageButtonCount = isMobile ? 3 : 5;
+    const pageButtonCount = 5;
 
     const getPageNumbers = () => {
         const pages = [];

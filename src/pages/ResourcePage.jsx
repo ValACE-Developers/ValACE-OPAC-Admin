@@ -39,7 +39,7 @@ import { Header } from "../components/layout";
 import { useForceDeleteResource } from "../hooks/resources/useForceDeleteResource";
 
 
-const ResourcePage = () => {
+export const ResourcePage = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState("ALL");
@@ -842,5 +842,3 @@ const ResourcePage = () => {
         </div>
     );
 };
-
-export default ResourcePage;

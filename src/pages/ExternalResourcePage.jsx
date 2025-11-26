@@ -1,12 +1,11 @@
 import { ChevronDown, ChevronRight, ChevronUp, Edit, Eye, Plus, RefreshCw, Search, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteExternalResource } from '../api/ApiService';
-import { ADMIN_ROUTES } from '../../config/adminRoutes';
-import { useAllExternalResources } from '../../hooks/useDashboardData';
+// import { deleteExternalResource } from '../api/ApiService';
+// import { useAllExternalResources } from '@/hooks';
 import { NotificationContainer, useNotification } from '../hooks/useNotification';
 
-const ExternalResourcePage = () => {
+export const ExternalResourcePage = () => {
     const navigate = useNavigate();
     const { data: resourcesData, isLoading, refetch, isFetching } = useAllExternalResources();
     const { notifications, success, error, removeNotification } = useNotification();
@@ -126,9 +125,9 @@ const ExternalResourcePage = () => {
     const handleEdit = (resource) => {
         // Navigate to appropriate edit page based on resource type
         if (resource.type === 'api') {
-            navigate(ADMIN_ROUTES.CREATE_API, { state: { editResource: resource } });
+            navigate('/admin/resources/create/api', { state: { editResource: resource } });
         } else if (resource.type === 'redirect') {
-            navigate(ADMIN_ROUTES.CREATE_REDIRECT, { state: { editResource: resource } });
+            navigate('/admin/resources/create/redirect', { state: { editResource: resource } });
         }
     };
 
@@ -231,7 +230,7 @@ const ExternalResourcePage = () => {
                             <RefreshCw className={`w-5 h-5 ${isFetching ? "animate-spin" : ""}`} />
                         </button>
                         <button 
-                            onClick={() => navigate(ADMIN_ROUTES.CHOOSE_RESOURCE)}
+                            onClick={() => navigate('/admin/resources/choose')}
                             className="flex items-center gap-2 bg-[#00104A] text-white px-4 py-2.5 rounded-lg hover:bg-[#001a5e] transition-colors duration-200"
                         >
                             <Plus className="w-5 h-5" />
@@ -527,5 +526,3 @@ const ExternalResourcePage = () => {
         </div>
     );
 };
-
-export default ExternalResourcePage;
