@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { StackedBarChartCategoryComponent } from "@/components/ui";
+import { StackedBarChartCategoryGenderComponent } from "@/components/ui";
 import { useGetPerCategoryUsage } from "@/hooks/dashboard";
 
 export const BarGraphDemographic = () => {
@@ -23,12 +23,9 @@ export const BarGraphDemographic = () => {
         enabled: !!date // Only fetch when date is selected
     });
 
-    // Transform API response to chart data format
+    // Pass raw data directly to the component - it will handle gender separation
     const chartData = useMemo(() => {
         if (!apiResponse?.data) return null;
-
-        // Transform to stacked bar chart format with age groups
-        // Expected format: [{ category, age_group, count }]
         return apiResponse.data;
     }, [apiResponse]);
 
@@ -78,7 +75,7 @@ export const BarGraphDemographic = () => {
                         <p className="text-gray-500 text-xl">Please select a date to view data</p>
                     </div>
                 ) : (
-                    <StackedBarChartCategoryComponent data={chartData} height={320} />
+                    <StackedBarChartCategoryGenderComponent data={chartData} height={320} />
                 )}
             </div>
         </>

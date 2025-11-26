@@ -8,3 +8,4 @@ export { LineGraphDemographic } from "./LineGraphDemographic";
 export { BarGraphDemographic } from "./BarGraphDemographic";
 export { PieChartDemographic } from "./PieChartDemographic";
 export { DemographicCard } from "./DemographicCard";
+export { UsageOverTimeDemographic } from "./UsageOverTimeDemographic";
