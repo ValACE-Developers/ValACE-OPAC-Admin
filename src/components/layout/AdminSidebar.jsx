@@ -4,7 +4,8 @@ import {
     LogOut,
     Star,
     Home,
-    SignalHigh
+    SignalHigh,
+    FileText
 } from "lucide-react";
 import { LOGO_IMAGE } from "@/constants/asset";
 
@@ -23,6 +24,11 @@ const NAVIGATION_ITEMS = [
         path: "/admin/featured-books",
         label: "Featured Books",
         icon: <Star className="w-5 h-5" />,
+    },
+    {
+        path: "/admin/sys-logs",
+        label: "System Logs",
+        icon: <FileText className="w-5 h-5" />,
     },
     // {
     //     path: "/admin/resources",

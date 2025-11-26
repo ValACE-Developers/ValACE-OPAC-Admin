@@ -1,18 +1,12 @@
-const apiVersion = "v1";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const apiPort = "8000";
-
-// Ensure API_BASE_URL has proper protocol
-const normalizedBaseUrl = apiBaseUrl?.startsWith('http') 
-  ? apiBaseUrl 
-  : `http://${apiBaseUrl}`;
-
-export const API_BASE_URL = `${normalizedBaseUrl}:${apiPort}/api/${apiVersion}`;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const username = import.meta.env.VITE_USERNAME;
 const password = import.meta.env.VITE_PASSWORD;
 
-export function createAuthHeaders() {
-  const credentials = btoa(`${username}:${password}`);
+export function createAuthHeaders(authUsername, authPassword) {
+  const u = authUsername || username;
+  const p = authPassword || password;
+                                                                                                          
+  const credentials = btoa(`${u}:${p}`);
   return {
     Authorization: `Basic ${credentials}`,
     "Content-Type": "application/json",

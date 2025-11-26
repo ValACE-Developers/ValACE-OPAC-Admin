@@ -11,6 +11,7 @@ import {
     AdminDashboardPage,
     FeaturedBooksPage,
     ReportsPage,
+    SystemLogs,
     ResourcePage,
     ExternalResourcePage,
     ChooseResourceTypePage,
@@ -56,14 +57,15 @@ const AppRoute = () => {
                         <Route index element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path="dashboard" element={<AdminDashboardPage />} />
                         <Route path="reports" element={<ReportsPage />}/>
+                        <Route path="featured-books" element={<FeaturedBooksPage />} />
+                        <Route path="sys-logs" element={<SystemLogs />} />
                         {/* <Route path="resources" element={<ResourcePage />} />
                         <Route path="resources/choose" element={<ChooseResourceTypePage />} />
                         <Route path="resources/create/api" element={<CreateApiResourcePage />} />
                         <Route path="resources/:id/edit/api" element={<EditApiResourcePage />} />
                         <Route path="resources/:id/edit/redirect" element={<EditRedirectResourcePage />} />
                         <Route path="resources/create/redirect" element={<CreateRedirectResourcePage />} /> */}
-                        <Route path="featured-books" element={<FeaturedBooksPage />} />
-                        <Route path="logs" element={<LogsPage />} />
+                        {/* <Route path="logs" element={<LogsPage />} /> */}
                     </Route>
                 </Route>
 
