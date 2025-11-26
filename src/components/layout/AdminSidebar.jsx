@@ -1,12 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-    LayoutDashboard,
     LogOut,
     Star,
     Home,
-    Boxes,
-    FileText,
+    SignalHigh
 } from "lucide-react";
 import { LOGO_IMAGE } from "@/constants/asset";
 
@@ -15,6 +13,11 @@ const NAVIGATION_ITEMS = [
         path: "/admin/dashboard",
         label: "Dashboard",
         icon: <Home className="w-5 h-5" />,
+    },
+    {
+        path: "/admin/reports",
+        label: "Reports",
+        icon: <SignalHigh className="w-5 h-5" />,
     },
     {
         path: "/admin/featured-books",

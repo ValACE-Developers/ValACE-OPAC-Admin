@@ -10,6 +10,7 @@ import {
     AdminLoginPage,
     AdminDashboardPage,
     FeaturedBooksPage,
+    ReportsPage,
     ResourcePage,
     ExternalResourcePage,
     ChooseResourceTypePage,
@@ -54,6 +55,7 @@ const AppRoute = () => {
                     <Route element={<AdminLayout />}>
                         <Route index element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path="dashboard" element={<AdminDashboardPage />} />
+                        <Route path="reports" element={<ReportsPage />}/>
                         {/* <Route path="resources" element={<ResourcePage />} />
                         <Route path="resources/choose" element={<ChooseResourceTypePage />} />
                         <Route path="resources/create/api" element={<CreateApiResourcePage />} />
