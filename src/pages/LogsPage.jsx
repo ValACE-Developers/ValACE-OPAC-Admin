@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { useLaravelLogs } from "../hooks/logs/useLaravelLogs";
-import { useSuccessInfoLogs } from "../hooks/logs/useSuccessInfoLogs";
-import { useErrorLogs } from "../hooks/logs/useErrorLogs";
-import { useClearAllLogs } from "../hooks/logs/useClearLogs";
+import { useLaravelLogs } from "../hooks/system-logs/useLaravelLogs";
+import { useSuccessInfoLogs } from "../hooks/system-logs/useSuccessInfoLogs";
+import { useErrorLogs } from "../hooks/system-logs/useErrorLogs";
+import { useClearAllLogs } from "../hooks/system-logs/useClearLogs";
 import { FileText, AlertCircle, CheckCircle, Clock, Trash2, AlertTriangle } from "lucide-react";
 import Header from "../components/layout/Header";
-import { LogTab } from "../components/page_components/admin_page/logs_page/index";
+import { LogTab } from "../components/page_components/logs_page/index";
 
 export const LogsPage = () => {
     const [activeTab, setActiveTab] = useState("system");
@@ -305,5 +305,3 @@ export const LogsPage = () => {
         </div>
     );
 };
-
-export default LogsPage;

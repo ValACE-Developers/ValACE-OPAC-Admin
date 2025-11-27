@@ -16,7 +16,7 @@ import {
     CircleX,
 } from "lucide-react";
 
-const EditRedirectResourcePage = () => {
+export const EditRedirectResourcePage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
@@ -496,5 +496,3 @@ const EditRedirectResourcePage = () => {
         </div>
     );
 };
-
-export default EditRedirectResourcePage;

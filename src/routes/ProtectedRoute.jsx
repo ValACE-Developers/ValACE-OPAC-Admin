@@ -1,6 +1,6 @@
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { LogoLoading } from "../components/ui/LogoLoading";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogoLoading } from "@/components/ui/LogoLoading";
 
 const ProtectedRoute = () => {
     const { isAuthenticated, loading, error } = useAuth();
@@ -23,8 +23,8 @@ const ProtectedRoute = () => {
             />
         );
     }
-    if (!true) {
-    // if (!isAuthenticated) {
+    // if (!true) {
+    if (!isAuthenticated) {
         return (
             <Navigate to={"/admin/login"} state={{ from: location }} replace />
         );

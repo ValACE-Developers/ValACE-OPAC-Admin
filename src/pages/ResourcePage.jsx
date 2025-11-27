@@ -34,12 +34,12 @@ import {
     Pagination,
     DeleteConfirmationModal,
     SearchAndFilters,
-} from "../components/page_components/admin_page/resource_page/index";
+} from "../components/page_components/resource_page/index";
 import { Header } from "../components/layout";
 import { useForceDeleteResource } from "../hooks/resources/useForceDeleteResource";
 
 
-const ResourcePage = () => {
+export const ResourcePage = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState("ALL");
@@ -842,5 +842,3 @@ const ResourcePage = () => {
         </div>
     );
 };
-
-export default ResourcePage;

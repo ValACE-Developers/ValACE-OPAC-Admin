@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ApiService } from "../../api/ApiService";
+import { ApiService } from "@/api/ApiService";
 
 export const useGetPerLocationUsage = (params, options = {}) => {
     return useQuery({

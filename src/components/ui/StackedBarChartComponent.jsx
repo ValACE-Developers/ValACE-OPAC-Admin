@@ -86,6 +86,15 @@ export const StackedBarChartComponent = ({ data, height = 300, timeFrame = 'dail
     const transformData = (rawData) => {
         if (!rawData || rawData.length === 0) return sampleData;
         
+        // Check if data is already in the correct format
+        const firstEntry = rawData[0];
+        const hasAgeGroupProperty = firstEntry && 'age_group' in firstEntry;
+        
+        // If data already has age group keys, return as is
+        if (!hasAgeGroupProperty && firstEntry && AGE_GROUPS.some(group => group in firstEntry)) {
+            return rawData;
+        }
+        
         // API format: [{ date, age_group, count }]
         // Transform to: [{ date, '0-12': count, '13-21': count, '22-35': count, '36-59': count, '60+': count }]
         

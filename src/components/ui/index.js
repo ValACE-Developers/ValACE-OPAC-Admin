@@ -4,6 +4,8 @@ export { BarChartComponent } from "./BarChartComponent";
 export { PieChartComponent } from "./PieChartComponent";
 export { StackedBarChartComponent } from "./StackedBarChartComponent";
 export { StackedBarChartCategoryComponent } from "./StackedBarChartCategoryComponent";
+export { StackedBarChartGenderComponent } from "./StackedBarChartGenderComponent";
+export { StackedBarChartCategoryGenderComponent } from "./StackedBarChartCategoryGenderComponent";
 export { CollectionDisplay } from "./CollectionDisplay";
 export { ViewSwitcher } from "./ViewSwitcher";
 export { ListDisplay } from "./ListDisplay";

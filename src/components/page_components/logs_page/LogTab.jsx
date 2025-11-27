@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { RefreshCw, Trash2, AlertTriangle } from "lucide-react";
 import LogContainer from "./LogContainer";
-import { useClearLaravelLog, useClearInfoLog, useClearErrorLog } from "../../../../hooks/logs/useClearLogs";
+import { useClearLaravelLog, useClearInfoLog, useClearErrorLog } from "@/hooks/system-logs/useClearLogs";
 
 const LogTab = ({
     title,
