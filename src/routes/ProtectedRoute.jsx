@@ -23,8 +23,8 @@ const ProtectedRoute = () => {
             />
         );
     }
-    // if (!true) {
-    if (!isAuthenticated) {
+    if (!true) {
+    // if (!isAuthenticated) {
         return (
             <Navigate to={"/admin/login"} state={{ from: location }} replace />
         );

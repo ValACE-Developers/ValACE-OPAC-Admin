@@ -3,6 +3,7 @@ import * as AuthService from "./AuthService";
 import * as ResourceService from "./ResourceService";
 import * as LogService from "./LogService";
 import * as DashboardService from "./DashboardService";
+import { ReportService } from "./ReportService";
 // External Resource Management service
 import { API_BASE_URL, createAuthHeaders } from "./config";
 
@@ -77,6 +78,7 @@ export const ApiService = {
     DashboardService,
     TestService,
     LogService,
+    ReportService,
 };
 
 export default ApiService;
