@@ -10,7 +10,7 @@ import {
     MediaSection,
     ApiConfigurationSection,
     EndpointsSection,
-} from '../components/page_components/admin_page/create_api_resource_page/index.js';
+} from '../components/page_components/create_api_resource_page/index.js';
 import {
     ChevronLeft,
     Database,
@@ -18,7 +18,7 @@ import {
 
 const emptyKv = () => ({ key: '', value: '' });
 
-const CreateApiResourcePage = () => {
+export const CreateApiResourcePage = () => {
     const navigate = useNavigate();
     const { success, error, notifications, removeNotification } = useNotification();
     const { mutateAsync, isPending } = useCreateResource();
@@ -1226,6 +1226,4 @@ const CreateApiResourcePage = () => {
         </div>
     );
 };
-
-export default CreateApiResourcePage;
 

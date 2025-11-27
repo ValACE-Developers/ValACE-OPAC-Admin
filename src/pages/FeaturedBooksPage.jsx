@@ -1,43 +1,41 @@
 import { Header } from "../components/layout";
-import { useFeaturedSelection } from "../hooks/books/useFeaturedSelection";
-import { useCuratedFeaturedBooks } from "../hooks/books/useCuratedFeaturedBooks";
-import { useStoreCuratedFeaturedBooks } from "../hooks/books/useStoreCuratedFeaturedBooks";
-import { useDeleteFeaturedBook } from "../hooks/books/useDeleteFeaturedBook";
+import { useFeaturedSelection } from "@/hooks/books/useFeaturedSelection";
+import { useCuratedFeaturedBooks } from "@/hooks/books/useCuratedFeaturedBooks";
+import { useStoreCuratedFeaturedBooks } from "@/hooks/books/useStoreCuratedFeaturedBooks";
+import { useDeleteFeaturedBook } from "@/hooks/books/useDeleteFeaturedBook";
 import { useState, useMemo, useRef } from "react";
 import {
-    LayoutGrid,
-    List,
-    Star,
-    RefreshCcw,
-    Trash2,
     Loader2,
+    Star,
+    X,
+    Edit,
 } from "lucide-react";
 
 import {
     useNotification,
     NotificationContainer,
 } from "../hooks/useNotification";
-import { DEFAULT_COVER } from "@/utils";
+import { FeaturedBookCard } from "@/components/page_components/dashboard/FeaturedBookCard";
+import { Pagination, EntriesDropdown } from "@/components/ui";
 
 export const FeaturedBooksPage = () => {
     // Server-driven pagination state for Book Selection
     const [selectionPage, setSelectionPage] = useState(1);
     const [selectionPerPage, setSelectionPerPage] = useState(20);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchInput, setSearchInput] = useState("");
     const [selectedBooks, setSelectedBooks] = useState(new Set());
-    const [selectedFeaturedBooks, setSelectedFeaturedBooks] = useState(
-        new Set()
-    );
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [deletingBookId, setDeletingBookId] = useState(null);
+    const [isManageMode, setIsManageMode] = useState(false);
     const {
         data: featuredBooksSelectionData,
         isLoading: isSelectionLoading,
-        isFetching: isFetchingSelection,
-        refetch: refetchSelection,
     } = useFeaturedSelection(
         {
             page: selectionPage,
             per_page: selectionPerPage,
             api_resource_id: 1,
+            search: searchQuery,
             debug: false,
         },
         { enabled: true }
@@ -46,18 +44,16 @@ export const FeaturedBooksPage = () => {
     const {
         data: storedBooksData,
         isLoading: isLoadingStored,
-        isFetching: isFetchingStored,
         refetch: refetchStored,
     } = useCuratedFeaturedBooks({
         page: 1,
-        per_page: 20,
+        per_page: 10,
     });
 
     // Store curated featured books mutation
     const {
         mutate: storeFeaturedBooks,
         isLoading: isStoring,
-        error: storeError,
     } = useStoreCuratedFeaturedBooks({
         onSuccess: (data) => {
             // Clear selection after successful storage
@@ -72,7 +68,7 @@ export const FeaturedBooksPage = () => {
             if (error?.response?.status !== 422) {
                 showError(
                     "Failed to feature books. Please try again. " +
-                        error.message
+                    error.message
                 );
             }
         },
@@ -81,8 +77,6 @@ export const FeaturedBooksPage = () => {
     // Delete featured books mutation
     const {
         mutate: deleteFeaturedBook,
-        isFetching: isFetchingDelete,
-        error: deleteError,
     } = useDeleteFeaturedBook({
         onSuccess: (data) => {
             // Refetch stored books to update the list
@@ -93,7 +87,7 @@ export const FeaturedBooksPage = () => {
             if (error?.response?.status !== 422) {
                 showError(
                     "Failed to delete featured book. Please try again. " +
-                        error.message
+                    error.message
                 );
             }
         },
@@ -154,88 +148,31 @@ export const FeaturedBooksPage = () => {
             return;
         }
 
-        // Log the data being sent for debugging
-        console.log("Selected books for featuring:", validatedIds);
-
         const featuredBooksData = {
             book_cache_ids: validatedIds,
         };
 
-        console.log("Data being sent to API:", featuredBooksData);
-
         storeFeaturedBooks(featuredBooksData);
     };
 
-    // Handle deleting featured books
-    const handleDeleteFeaturedBooks = async () => {
-        setIsDeleting(true);
-        const selectedFeaturedIdsArray = Array.from(selectedFeaturedBooks);
-        if (selectedFeaturedIdsArray.length === 0) return;
+    // Handle deleting a single featured book
+    const handleDeleteSingleFeaturedBook = async (featuredBookId) => {
+        setDeletingBookId(featuredBookId);
 
-        // Ensure all IDs are numbers and validate them
-        const validatedIds = selectedFeaturedIdsArray
-            .map((id) => {
-                const numId = Number(id);
-                if (isNaN(numId)) {
-                    console.error("Invalid featured book ID:", id);
-                    return null;
-                }
-                return numId;
-            })
-            .filter((id) => id !== null);
-
-        if (validatedIds.length === 0) {
-            showError(
-                "No valid featured book IDs found. Please try selecting books again."
-            );
-            return;
-        }
-
-        try {
-            // Delete featured books one by one
-            for (const featuredBookId of validatedIds) {
-                await new Promise((resolve, reject) => {
-                    deleteFeaturedBook(featuredBookId, {
-                        onSuccess: () => resolve(),
-                        onError: (error) => reject(error),
-                    });
-                });
-            }
-
-            // Clear selection after successful deletion
-            setSelectedFeaturedBooks(new Set());
-            // Show success notification
-            showSuccess(
-                `${validatedIds.length} featured book(s) deleted successfully!`
-            );
-        } catch (error) {
-            showError(
-                "Some featured books failed to delete. Please try again."
-            );
-        } finally {
-            setIsDeleting(false);
-        }
-    };
-
-    // Handle featured book selection
-    const handleFeaturedBookClick = (featuredBookId) => {
-        setSelectedFeaturedBooks((prev) => {
-            const newSet = new Set(prev);
-            if (newSet.has(featuredBookId)) {
-                newSet.delete(featuredBookId);
-            } else {
-                newSet.add(featuredBookId);
-            }
-            return newSet;
+        deleteFeaturedBook(featuredBookId, {
+            onSuccess: () => {
+                showSuccess("Featured book removed successfully!");
+                setDeletingBookId(null);
+            },
+            onError: (error) => {
+                showError("Failed to delete featured book. Please try again.");
+                setDeletingBookId(null);
+            },
         });
     };
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
-            <Header
-                title="Manage Featured Books"
-                description="Manage the books that are currently featured on the home page"
-            />
 
             {/* Notification Container */}
             <NotificationContainer
@@ -243,54 +180,43 @@ export const FeaturedBooksPage = () => {
                 removeNotification={removeNotification}
             />
 
+            <Header
+                title="Manage Featured Books"
+                description="Manage the books that are currently featured on the home page"
+            />
+
+            <hr className="my-14 border border-gray-200" />
+
             {/* Featured Books Section (Top Box) */}
-            <section className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mt-6">
+            <section>
                 <div className="mb-4 flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-900">
+                        <h2 className="text-2xl font-semibold text-[var(--main-color)]">
                             Featured Books
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-base text-gray-500">
                             Currently featured books on the home page
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        {selectedFeaturedBooks.size > 0 && (
+                        {isManageMode ? (
                             <button
-                                onClick={handleDeleteFeaturedBooks}
-                                disabled={isDeleting || isFetchingDelete}
-                                className="px-3 py-2 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors flex items-center gap-2"
+                                onClick={() => setIsManageMode(false)}
+                                className="px-3 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors flex items-center gap-2"
                             >
-                                {isDeleting || isFetchingDelete ? (
-                                    <>
-                                        <RefreshCcw className="w-4 h-4 animate-spin" />
-                                        <span>Deleting...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Trash2 className="w-4 h-4" />
-                                        <span>
-                                            Delete ({selectedFeaturedBooks.size}
-                                            )
-                                        </span>
-                                    </>
-                                )}
+                                <X className="w-4 h-4" />
+                                <span>Done</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setIsManageMode(true)}
+                                disabled={featuredBooks.length === 0}
+                                className="px-3 py-2 text-sm bg-[var(--main-color)] text-white rounded-md hover:bg-[var(--main-color)]/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <Edit className="w-4 h-4" />
+                                <span>Manage Featured Books</span>
                             </button>
                         )}
-                        <button
-                            onClick={() => {
-                                refetchStored();
-                            }}
-                            disabled={isLoadingStored}
-                            className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-2"
-                        >
-                            <span>Refresh Books</span>
-                            {isFetchingStored ? (
-                                <RefreshCcw className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <RefreshCcw className="w-4 h-4" />
-                            )}
-                        </button>
                     </div>
                 </div>
 
@@ -312,58 +238,33 @@ export const FeaturedBooksPage = () => {
                 ) : featuredBooks.length > 0 ? (
                     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {featuredBooks.map((item) => {
-                            const book = item?.cache_book || item;
-                            const isSelected = selectedFeaturedBooks.has(
-                                item?.featured_book_id
-                            );
                             return (
-                                <div
-                                    key={item?.featured_book_id}
-                                    className={`rounded-md overflow-hidden bg-white flex flex-col items-center relative group cursor-pointer transition-all duration-200 ${
-                                        isSelected
-                                            ? "ring-2 ring-red-500 ring-offset-2"
-                                            : ""
-                                    }`}
-                                    onClick={() =>
-                                        handleFeaturedBookClick(
-                                            item?.featured_book_id
-                                        )
-                                    }
-                                >
-                                    {/* Selection indicator */}
-                                    {isSelected && (
-                                        <div className="absolute top-2 left-2 z-10 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
-                                            <span className="text-white text-xs font-bold">
-                                                ✓
-                                            </span>
-                                        </div>
+                                <div key={item?.featured_book_id} className="relative">
+                                    {/* X Delete button - only show in manage mode */}
+                                    {isManageMode && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteSingleFeaturedBook(item?.featured_book_id);
+                                            }}
+                                            disabled={deletingBookId === item?.featured_book_id}
+                                            className="absolute top-[-10px] right-6 z-20 w-8 h-8 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center border-2 border-white shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            title={deletingBookId === item?.featured_book_id ? "Removing..." : "Click to delete this book"}
+                                        >
+                                            {deletingBookId === item?.featured_book_id ? (
+                                                <Loader2 className="w-5 h-5 text-white animate-spin" />
+                                            ) : (
+                                                <X className="w-5 h-5 text-white" />
+                                            )}
+                                        </button>
                                     )}
-
-                                    {/* Featured indicator */}
-                                    <div className="absolute top-2 right-2 z-10 w-10 h-10 p-1 rounded-full bg-yellow-500 flex items-center justify-center border-2 border-white">
-                                        <Star className="w-10 h-10 text-white" />
-                                    </div>
-
-                                    <div className="w-[200px] h-[250px] bg-white flex items-center justify-center">
-                                        <img
-                                            src={DEFAULT_COVER}
-                                            alt={book?.title || "Book cover"}
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="p-3 w-full text-center">
-                                        <div className="text-sm font-medium text-gray-900 line-clamp-2">
-                                            {book?.title || "Untitled"}
-                                        </div>
-                                        <div className="text-xs text-gray-600 mt-1 line-clamp-1">
-                                            {book?.authors ||
-                                                book?.author ||
-                                                "Unknown author"}
-                                        </div>
-                                        <div className="text-xs text-gray-400 mt-1">
-                                            ID: {item?.featured_book_id}
-                                        </div>
-                                    </div>
+                                    <FeaturedBookCard
+                                        item={item}
+                                        showFeaturedBadge={true}
+                                        isSelected={false}
+                                        onClick={undefined}
+                                        className=""
+                                    />
                                 </div>
                             );
                         })}
@@ -376,38 +277,87 @@ export const FeaturedBooksPage = () => {
                 )}
             </section>
 
+            <hr className="border my-14 border-gray-200" />
+
             {/* Book Selection Section (Bottom Box) */}
-            <section className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mt-8">
-                <div className="mb-4 flex items-center justify-between">
+            <section>
+                <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-900">
+                        <h2 className="text-2xl font-semibold text-[var(--main-color)]">
                             Book Selection
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-base text-gray-500">
                             Browse available books to feature (excluding already
                             featured books)
                         </p>
-                        {isFetchingSelection && (
-                            <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-                                <RefreshCcw className="w-3 h-3 animate-spin" />
-                                Loading page {selectionPage}...
-                            </p>
-                        )}
                     </div>
+                </div>
+
+                {/* Search Bar and Feature Button */}
+                <div className="mb-4 flex items-center gap-2">
+                    <div className="flex-1 flex gap-2">
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        setSearchQuery(searchInput);
+                                        setSelectionPage(1);
+                                    }
+                                }}
+                                placeholder="Search books by title, author, or ISBN..."
+                                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--main-color)] focus:border-transparent"
+                            />
+                            {searchInput && (
+                                <button
+                                    onClick={() => {
+                                        setSearchInput("");
+                                        setSearchQuery("");
+                                        setSelectionPage(1);
+                                    }}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                    title="Clear search"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            )}
+                        </div>
+                        <button
+                            onClick={() => {
+                                setSearchQuery(searchInput);
+                                setSelectionPage(1);
+                            }}
+                            className="px-4 py-2 bg-[var(--main-color)] text-white rounded-md hover:bg-[var(--main-color)]/90 transition-colors"
+                        >
+                            Search
+                        </button>
+                    </div>
+                    {/* Feature this Book/s Button */}
                     <button
-                        onClick={() => {
-                            // Refetch both selection data and stored books
-                            // This will update the available books list
-                            refetchSelection();
-                        }}
-                        disabled={isSelectionLoading}
-                        className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-2"
+                        onClick={handleFeatureBooks}
+                        disabled={selectedBooks.size === 0 || isStoring}
+                        className={`px-3 py-2 text-md rounded-md transition-colors ${selectedBooks.size === 0 || isStoring
+                            ? "text-gray-400 cursor-not-allowed bg-gray-200"
+                            : "bg-[var(--main-color)] text-white hover:bg-opacity-90"
+                            } flex items-center gap-2`}
                     >
-                        <span>Refresh Books</span>
-                        {isFetchingSelection ? (
-                            <RefreshCcw className="w-4 h-4 animate-spin" />
+                        {isStoring ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Featuring Books...</span>
+                            </>
+                        ) : selectedBooks.size > 0 ? (
+                            <>
+                                <span>
+                                    Feature {selectedBooks.size} book
+                                    {selectedBooks.size > 1 ? "s" : ""}
+                                </span>
+                                <Star className="w-4 h-4 text-white" />
+                            </>
                         ) : (
-                            <RefreshCcw className="w-4 h-4" />
+                            "Select Books to Feature"
                         )}
                     </button>
                 </div>
@@ -425,20 +375,16 @@ export const FeaturedBooksPage = () => {
                     showError={showError}
                     selectedBooks={selectedBooks}
                     setSelectedBooks={setSelectedBooks}
-                    onFeatureBooks={handleFeatureBooks}
-                    isStoring={isStoring}
+                    searchQuery={searchQuery}
                 />
             </section>
         </div>
     );
 };
 
-export default FeaturedBooksPage;
-
 // Book Selection controls bound to server pagination
 const BookSelectionControls = ({
     books,
-    availableBooks,
     totalResults,
     page,
     setPage,
@@ -448,10 +394,8 @@ const BookSelectionControls = ({
     showError,
     selectedBooks,
     setSelectedBooks,
-    onFeatureBooks,
-    isStoring,
+    searchQuery,
 }) => {
-    const [isGrid, setIsGrid] = useState(true);
     const lastErrorTime = useRef(0);
 
     const handleBookClick = (bookId) => {
@@ -479,20 +423,8 @@ const BookSelectionControls = ({
         });
     };
 
-    const totalPages = Math.max(
-        1,
-        Math.ceil((totalResults || 0) / (perPage || 1))
-    );
-    const startItem = totalResults > 0 ? (page - 1) * perPage + 1 : 0;
-    const endItem = Math.min(page * perPage, totalResults);
-
     // Server already paginates, so just show current page results
     const displayBooks = useMemo(() => books || [], [books]);
-
-    const handleEntriesPerPageChange = (num) => {
-        setPerPage(num);
-        setPage(1); // Reset to first page when changing entries per page
-    };
 
     if (isLoading) {
         return (
@@ -525,243 +457,58 @@ const BookSelectionControls = ({
 
     if (!books || books.length === 0) {
         return (
-            <div className="h-64 border-2 border-dashed border-gray-200 rounded-md flex items-center justify-center text-gray-400">
-                {totalResults === 0
-                    ? "No books available to feature"
-                    : "No books available to feature on this page"}
+            <div className="h-64 border-2 border-dashed border-gray-200 rounded-md flex flex-col items-center justify-center text-gray-400 gap-2">
+                {totalResults === 0 ? (
+                    searchQuery ? (
+                        <>
+                            <p className="text-lg font-medium">No books found for "{searchQuery}"</p>
+                            <p className="text-sm">Try adjusting your search terms or browse all available books</p>
+                        </>
+                    ) : (
+                        <p>No books available to feature</p>
+                    )
+                ) : (
+                    <p>No books available to feature on this page</p>
+                )}
             </div>
         );
     }
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600">
-                        Entries per page:
-                    </span>
-                    <div className="px-1 border border-gray-300 rounded-md focus-within:border-[var(--main-color)] focus-within:ring-1 focus-within:ring-[var(--main-color)]">
-                        <select
-                            value={perPage}
-                            onChange={(e) =>
-                                handleEntriesPerPageChange(
-                                    Number(e.target.value)
-                                )
-                            }
-                            className="bg-transparent border-none focus:outline-none"
-                        >
-                            {[5, 10, 20, 50, 100].map((n) => (
-                                <option key={n} value={n}>
-                                    {n}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-1 border border-gray-300 rounded-md p-1 self-start">
-                    <button
-                        onClick={() => setIsGrid(true)}
-                        className={`p-2 rounded transition-colors ${
-                            isGrid
-                                ? "bg-[var(--main-color)] text-white"
-                                : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                        aria-label="Grid view"
-                    >
-                        <LayoutGrid className="w-4 h-4" />
-                    </button>
-                    <div className="w-px h-5 bg-gray-300" />
-                    <button
-                        onClick={() => setIsGrid(false)}
-                        className={`p-2 rounded transition-colors ${
-                            !isGrid
-                                ? "bg-[var(--main-color)] text-white"
-                                : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                        aria-label="List view"
-                    >
-                        <List className="w-4 h-4" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Results summary */}
-                <div className="text-sm text-gray-600">
-                    Showing {startItem} to {endItem} of {totalResults} total
-                    books
-                    {availableBooks.length !== totalResults && (
-                        <span className="text-gray-500">
-                            {" "}
-                            ({availableBooks.length} available to feature)
-                        </span>
-                    )}
-                </div>
-
-                {/* Feature this Book/s Button */}
-                <button
-                    onClick={onFeatureBooks}
-                    disabled={selectedBooks.size === 0 || isStoring}
-                    className={`px-3 py-2 text-md rounded-md transition-colors ${
-                        selectedBooks.size === 0 || isStoring
-                            ? "text-gray-400 cursor-not-allowed bg-gray-200"
-                            : "bg-[var(--main-color)] text-white hover:bg-opacity-90"
-                    } flex items-center gap-2`}
-                >
-                    {isStoring ? (
-                        <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Featuring Books...</span>
-                        </>
-                    ) : selectedBooks.size > 0 ? (
-                        <>
-                            <span>
-                                Feature {selectedBooks.size} book
-                                {selectedBooks.size > 1 ? "s" : ""}
-                            </span>
-                            <Star className="w-4 h-4 text-white" />
-                        </>
-                    ) : (
-                        "Select Books to Feature"
-                    )}
-                </button>
+            {/* Entries Dropdown */}
+            <div className="flex items-center">
+                <EntriesDropdown
+                    entriesPerPage={perPage}
+                    setEntriesPerPage={setPerPage}
+                    setPage={setPage}
+                />
             </div>
 
             {/* Books list */}
-            {isGrid ? (
-                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                    {displayBooks.map((book) => (
-                        <div
-                            key={book?.id || book?.book_cache_id}
-                            className={`border-2 rounded-md overflow-hidden bg-white flex flex-col items-center relative cursor-pointer transition-all duration-200 ${
-                                selectedBooks.has(
-                                    book?.id || book?.book_cache_id
-                                )
-                                    ? "border-gray-200 shadow-lg"
-                                    : "border-gray-200 hover:border-gray-300"
-                            }`}
-                            onClick={() =>
-                                handleBookClick(book?.id || book?.book_cache_id)
-                            }
-                        >
-                            {/* Checkbox icon in top right - only show when selected */}
-                            {selectedBooks.has(
-                                book?.id || book?.book_cache_id
-                            ) && (
-                                <div className="absolute top-2 right-2 z-10 w-10 h-10 p-1 rounded-full bg-yellow-500 flex items-center justify-center border-2 border-white">
-                                    <Star className="w-10 h-10 text-white" />
-                                </div>
-                            )}
-
-                            <div className="w-[200px] h-[250px] bg-white flex items-center justify-center">
-                                <img
-                                    src={DEFAULT_COVER}
-                                    alt={book?.title || "Book cover"}
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                            <div className="p-3 w-full text-center">
-                                <div className="text-sm font-medium text-gray-900 line-clamp-2">
-                                    {book?.title || "Untitled"}
-                                </div>
-                                <div className="text-xs text-gray-600 mt-1 line-clamp-1">
-                                    {book?.authors ||
-                                        book?.author ||
-                                        "Unknown author"}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="divide-y divide-gray-200 border border-gray-200 rounded-md overflow-hidden bg-white">
-                    {displayBooks.map((book) => (
-                        <div
-                            key={book?.id || book?.book_cache_id}
-                            className="flex gap-4 p-4 items-start"
-                        >
-                            <div className="w-[150px] h-[200px] bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                                <img
-                                    src={DEFAULT_COVER}
-                                    alt={book?.title || "Book cover"}
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-gray-900">
-                                    {book?.title || "Untitled"}
-                                </div>
-                                <div className="text-xs text-gray-600 mt-1">
-                                    {book?.authors ||
-                                        book?.author ||
-                                        "Unknown author"}
-                                </div>
-                                {book?.description && (
-                                    <p className="text-xs text-gray-500 mt-2 line-clamp-2">
-                                        {book.description}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Pagination (centered, max 10 buttons) */}
-            <div className="px-2 py-3 border-t border-gray-200 flex justify-center">
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setPage(Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        className={`px-3 py-1 text-sm rounded ${
-                            page === 1
-                                ? "text-gray-400 cursor-not-allowed"
-                                : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                    >
-                        Previous
-                    </button>
-                    {(() => {
-                        const maxButtons = 10;
-                        let start = Math.max(
-                            1,
-                            page - Math.floor(maxButtons / 2)
-                        );
-                        let end = start + maxButtons - 1;
-                        if (end > totalPages) {
-                            end = totalPages;
-                            start = Math.max(1, end - maxButtons + 1);
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                {displayBooks.map((book) => (
+                    <FeaturedBookCard
+                        key={book?.id || book?.book_cache_id}
+                        item={book}
+                        showFeaturedBadge={false}
+                        isSelected={selectedBooks.has(
+                            book?.id || book?.book_cache_id
+                        )}
+                        onClick={() =>
+                            handleBookClick(book?.id || book?.book_cache_id)
                         }
-                        const pagesToShow = [];
-                        for (let p = start; p <= end; p++) pagesToShow.push(p);
-                        return pagesToShow.map((p) => (
-                            <button
-                                key={p}
-                                onClick={() => setPage(p)}
-                                className={`px-3 py-1 text-sm rounded ${
-                                    page === p
-                                        ? "bg-[var(--main-color)] text-white"
-                                        : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                            >
-                                {p}
-                            </button>
-                        ));
-                    })()}
-                    <button
-                        onClick={() => setPage(Math.min(totalPages, page + 1))}
-                        disabled={page === totalPages}
-                        className={`px-3 py-1 text-sm rounded ${
-                            page === totalPages
-                                ? "text-gray-400 cursor-not-allowed"
-                                : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                    >
-                        Next
-                    </button>
-                </div>
+                    />
+                ))}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+                page={page}
+                setPage={setPage}
+                total={totalResults}
+                entriesPerPage={perPage}
+            />
         </div>
     );
 };

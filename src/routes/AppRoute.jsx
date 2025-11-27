@@ -7,18 +7,20 @@ import ProtectedRoute from "./ProtectedRoute";
 // Page imports
 import { 
     NotFoundPage, 
-    AdminLoginPage
+    AdminLoginPage,
+    AdminDashboardPage,
+    FeaturedBooksPage,
+    ReportsPage,
+    SystemLogs,
+    ResourcePage,
+    ExternalResourcePage,
+    ChooseResourceTypePage,
+    CreateApiResourcePage,
+    EditApiResourcePage,
+    CreateRedirectResourcePage,
+    EditRedirectResourcePage,
+    LogsPage
 } from "@/pages";
-
-import AdminDashboard from "../pages/AdminDashboard";
-import FeaturedBooksPage from "../pages/FeaturedBooksPage";
-import ResourcePage from "../pages/ResourcePage";
-import ChooseResourceTypePage from "../pages/ChooseResourceTypePage";
-import CreateApiResourcePage from "../pages/CreateApiResourcePage";
-import EditApiResourcePage from "../pages/EditApiResourcePage";
-import CreateRedirectResourcePage from "../pages/CreateRedirectResourcePage";
-import EditRedirectResourcePage from "../pages/EditRedirectResourcePage";
-import LogsPage from "../pages/LogsPage";
 
 // Component to redirect authenticated users away from login using Outlet
 const RedirectIfAuthenticated = () => {
@@ -46,21 +48,24 @@ const AppRoute = () => {
                 {/* Authentication routes */}
                 <Route element={<RedirectIfAuthenticated />}>
                     <Route path="/admin/login" element={<AdminLoginPage />} />
+                    <Route path="/" element={<AdminLoginPage />} />
                 </Route>
 
                 {/* Admin routes */}
                 <Route path="/admin/*" element={<ProtectedRoute />}>
                     <Route element={<AdminLayout />}>
                         <Route index element={<Navigate to="/admin/dashboard" replace />} />
-                        <Route path="dashboard" element={<AdminDashboard />} />
-                        <Route path="resources" element={<ResourcePage />} />
+                        <Route path="dashboard" element={<AdminDashboardPage />} />
+                        <Route path="reports" element={<ReportsPage />}/>
+                        <Route path="featured-books" element={<FeaturedBooksPage />} />
+                        <Route path="sys-logs" element={<SystemLogs />} />
+                        {/* <Route path="resources" element={<ResourcePage />} />
                         <Route path="resources/choose" element={<ChooseResourceTypePage />} />
                         <Route path="resources/create/api" element={<CreateApiResourcePage />} />
                         <Route path="resources/:id/edit/api" element={<EditApiResourcePage />} />
                         <Route path="resources/:id/edit/redirect" element={<EditRedirectResourcePage />} />
-                        <Route path="resources/create/redirect" element={<CreateRedirectResourcePage />} />
-                        <Route path="featured-books" element={<FeaturedBooksPage />} />
-                        <Route path="logs" element={<LogsPage />} />
+                        <Route path="resources/create/redirect" element={<CreateRedirectResourcePage />} /> */}
+                        {/* <Route path="logs" element={<LogsPage />} /> */}
                     </Route>
                 </Route>
 

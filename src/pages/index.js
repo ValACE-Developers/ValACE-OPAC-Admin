@@ -1,5 +1,14 @@
 export { NotFoundPage } from "./NotFoundPage";
 export { AdminLoginPage } from "./AdminLoginPage";
-export { AdminDashboard } from "./AdminDashboard";
+export { AdminDashboardPage } from "./AdminDashboardPage";
+export { ReportsPage } from "./ReportsPage";
 export { FeaturedBooksPage } from "./FeaturedBooksPage";
 export { LogsPage } from "./LogsPage";
+export { ResourcePage } from "./ResourcePage";
+export { ExternalResourcePage } from "./ExternalResourcePage";
+export { ChooseResourceTypePage } from "./ChooseResourceTypePage";
+export { CreateApiResourcePage } from "./CreateApiResourcePage";
+export { EditApiResourcePage } from "./EditApiResourcePage";
+export { CreateRedirectResourcePage } from "./CreateRedirectResourcePage";
+export { EditRedirectResourcePage } from "./EditRedirectResourcePage";
+export { SystemLogs } from "./SystemLogs";

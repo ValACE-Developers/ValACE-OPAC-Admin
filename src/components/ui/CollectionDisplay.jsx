@@ -2,7 +2,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CoverCard from "./CoverCard";
-import { useMobile } from "@/utils";
 import { DEFAULT_COVER } from "@/constants/asset";
 import { useNavigate } from "react-router-dom";
 import { visitResource } from "@/utils";

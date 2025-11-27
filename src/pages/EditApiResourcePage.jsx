@@ -10,7 +10,7 @@ import {
     MediaSection,
     ApiConfigurationSection,
     EndpointsSection,
-} from '../components/page_components/admin_page/create_api_resource_page/index.js';
+} from '../components/page_components/create_api_resource_page/index.js';
 import {
     ChevronLeft,
     Database,
@@ -301,7 +301,7 @@ const schema = z.object({
         }),
 });
 
-const EditApiResourcePage = () => {
+export const EditApiResourcePage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const location = useLocation();
@@ -1382,7 +1382,5 @@ const EditApiResourcePage = () => {
         </div>
     );
 };
-
-export default EditApiResourcePage;
 
 

@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { StackedBarChartCategoryComponent } from "@/components/ui";
+import { StackedBarChartCategoryGenderComponent } from "@/components/ui";
 import { useGetPerCategoryUsage } from "@/hooks/dashboard";
 
-export const BarGraphDemographic = () => {
+export const PerCategoryDemographic = () => {
 
     // Get today's date in local timezone (YYYY-MM-DD)
     const getTodayLocal = () => {
@@ -23,12 +23,9 @@ export const BarGraphDemographic = () => {
         enabled: !!date // Only fetch when date is selected
     });
 
-    // Transform API response to chart data format
+    // Pass raw data directly to the component - it will handle gender separation
     const chartData = useMemo(() => {
         if (!apiResponse?.data) return null;
-
-        // Transform to stacked bar chart format with age groups
-        // Expected format: [{ category, age_group, count }]
         return apiResponse.data;
     }, [apiResponse]);
 
@@ -39,9 +36,10 @@ export const BarGraphDemographic = () => {
                 <div className="flex items-center justify-between gap-4">
                     <p className="text-3xl font-kulim-park text-gray-600 mt-1">Category</p>
                     <div className="flex items-center gap-3">
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Location</span>
                             <select
-                                className="px-1 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-3 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             >
@@ -53,32 +51,33 @@ export const BarGraphDemographic = () => {
 
                             </select>
                         </div>
-                        <div className="relative">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium">Date</span>
                             <input
                                 type="date"
                                 value={date || ""}
                                 onChange={(e) => setDate(e.target.value)}
-                                className="py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
+                                className="px-2 py-2 border-2 border-gray-300 rounded-sm text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--main-color)]"
                             />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="h-96 mt-3">
+            <div className="h-auto mt-3">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Loading...</p>
                     </div>
                 ) : error ? (
-					<div className="flex items-center justify-center h-full">
-						<p className="text-red-500 text-xl">{error?.message || "Something went wrong"}</p>
-					</div>
-				): !date ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-red-500 text-xl">{error?.message || "Something went wrong"}</p>
+                    </div>
+                ) : !date ? (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-500 text-xl">Please select a date to view data</p>
                     </div>
                 ) : (
-                    <StackedBarChartCategoryComponent data={chartData} height={320} />
+                    <StackedBarChartCategoryGenderComponent data={chartData} height={500} />
                 )}
             </div>
         </>

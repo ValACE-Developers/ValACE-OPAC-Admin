@@ -30,7 +30,7 @@ const ResourceTypeCard = ({ resourceType, onNavigate }) => (
 );
 
 // Main Page Component
-const ChooseResourceTypePage = () => {
+export const ChooseResourceTypePage = () => {
     const navigate = useNavigate();
 
     const resourceTypes = [
@@ -100,5 +100,3 @@ const ChooseResourceTypePage = () => {
         </div>
     );
 };
-
-export default ChooseResourceTypePage;

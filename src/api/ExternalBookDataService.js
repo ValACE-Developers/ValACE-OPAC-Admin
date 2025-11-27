@@ -104,6 +104,10 @@ export async function fetchBooksForFeaturedSelection(params = {}, auth = {}) {
         searchParams.api_resource_id = params.api_resource_id;
     }
 
+    if (params.search) {
+        searchParams.search = params.search;
+    }
+
     const queryString = new URLSearchParams(searchParams).toString();
     console.log("Featured selection query string:", queryString);
     const url = queryString
