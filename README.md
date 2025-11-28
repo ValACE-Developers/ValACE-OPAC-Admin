@@ -1,358 +1,299 @@
-# ValACE Frontend - React Application
+# ⚡ OPAC Frontend Setup Guide (Admin App)
 
-Modern, responsive frontend for the ValACE Library Resource Management System built with React, Vite, and TailwindCSS.
+This guide shows how to set up and run the frontend application that talks to the API server. It follows the same structure as the backend guide for consistency.
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
+## 📦 Requirements
 
-- Node.js >= 18.x
-- npm or yarn
-- Backend API server running (see [backend/README.md](../backend/README.md))
+Make sure you have the following installed:
 
-### Installation
+### For Local Development:
 
-1. **Install dependencies**
+| Tool        | Version (Recommended) | Purpose                      |
+| ----------- | --------------------- | ---------------------------- |
+| Node.js     | 18.x+                 | Runtime for build tools      |
+| npm / pnpm / yarn | Latest stable    | Package manager              |
+| Browsers    | Latest Chromium/Firefox/Safari | For testing UI          |
+
+Recommended: use Node LTS and a lockfile-compatible package manager (pnpm or npm).
+
+### For Docker Deployment:
+
+| Tool        | Version (Recommended) | Purpose                      |
+| ----------- | --------------------- | ---------------------------- |
+| Docker      | 20.x+                 | Container runtime            |
+| Docker Compose | 2.x+               | Multi-container orchestration |
+
+---
+
+## 🔧 Services & Endpoints
+
+- Backend API – The frontend communicates with the API server (see backend README). Default API base: `http://127.0.0.1:8000/api/v1`
+
+Ensure the API server (backend) is running before using the frontend.
+
+---
+
+## 📁 Environment Setup
+
+1. Create your environment configuration from the example:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2. Edit `.env` and set these important variables (Vite-style `VITE_` prefix is required for variables exposed to client code):
+
+    - VITE_API_BASE_URL — Base URL for backend API (e.g. `http://127.0.0.1:8000/api/v1`)
+    - VITE_USERNAME — Basic auth username for API requests (must match backend credentials)
+    - VITE_PASSWORD — Basic auth password for API requests (must match backend credentials)
+    - VITE_SYSTEM_LOGS_URL — URL for system logs
+    - VITE_TEST_MODE — Enable test mode
+    - VITE_ENVIRONMENT — Set environment (development/production)
+
+
+    Example `.env` (do NOT commit secrets to Git):
+
+    ```bash
+    VITE_USERNAME="username_of_basic_auth_api"
+    VITE_PASSWORD="password_of_basic_auth_api"
+    VITE_API_BASE_URL="base_url_of_backend_api"
+    VITE_SYSTEM_LOGS_URL="http://127.0.0.1:8000/logs"
+    VITE_TEST_MODE="true"
+    VITE_ENVIRONMENT="development"
+    ```
+
+3. Notes and best practices:
+    - After changing `.env` files, restart the dev server so Vite picks up the new values.
+    - If you need to expose non-client secrets to build-time only, use server-side tooling or CI variables rather than `VITE_` prefixed vars.
+
+---
+
+## 🐳 Docker Setup (Recommended for Production)
+
+The project includes Docker configuration for easy deployment with Nginx.
+
+### Docker Project Structure
+
+```
+docker/
+├── app/
+│   └── Dockerfile          # Multi-stage build (Node.js + Nginx)
+└── nginx/
+    └── default.conf        # Nginx configuration
+docker-compose.yml          # Service orchestration
+```
+
+### Running with Docker
+
+1. Ensure your `.env` file is configured (see [Environment Setup](#📁-environment-setup) section above)
+
+2. Build and start the container:
+
+    ```bash
+    # Build and run in detached mode
+    docker compose up -d
+
+    # Or with sudo if needed
+    sudo docker compose up -d
+    ```
+
+3. Access the application:
+    - Frontend: `http://localhost:3001`
+
+### Modifying the Port
+
+If you need to change the port because `3001` is already in use, you can edit the `docker-compose.yml` file.
+
+1.  Open `docker-compose.yml`.
+2.  Locate the `ports` section under the `frontend` service.
+3.  Change the first value (the "host port") to an available port.
+
+    For example, to change the port from `3001` to `3002`:
+
+    ```yaml
+    # docker-compose.yml
+    services:
+      frontend:
+        # ...
+        ports:
+          - "3002:80" # Changed 3001 to 3002
+        # ...
+    ```
+4.  Save the file and restart the container:
+    ```bash
+    docker compose up -d --build
+    ```
+    You can now access the application at `http://localhost:3002`.
+
+4. View logs:
+
+    ```bash
+    docker compose logs -f frontend
+    ```
+
+5. Stop the container:
+
+    ```bash
+    docker compose down
+    ```
+
+### Docker Build Details
+
+The `Dockerfile` uses a **multi-stage build**:
+
+1. **Stage 1 (Build)**: 
+   - Uses `node:18-alpine` 
+   - Installs dependencies and builds the Vite production bundle
+   - Environment variables are passed as build arguments
+
+2. **Stage 2 (Serve)**:
+   - Uses `nginx:alpine`
+   - Copies the built assets from Stage 1
+   - Serves static files on port 80
+
+### Docker Environment Variables
+
+Environment variables are passed from your `.env` file to the Docker build:
+
+- `VITE_API_BASE_URL` - Backend API URL
+- `VITE_USERNAME` - API authentication username
+- `VITE_PASSWORD` - API authentication password
+- `VITE_SYSTEM_LOGS_URL` - URL for system logs
+- `VITE_TEST_MODE` - Enable test mode
+- `VITE_ENVIRONMENT` - Set environment
+
+**Important**: These variables are baked into the built assets during the Docker build process. If you change `.env`, you must rebuild the container:
+
 ```bash
+docker compose up -d --build
+```
+
+### Customizing Nginx Configuration
+
+Edit `docker/nginx/default.conf` to customize:
+- Server name
+- Port configuration
+- Routing rules
+- Security headers
+
+After changes, rebuild and restart:
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+## 🛠️ Install & Run (Development)
+
+For local development without Docker:
+
+From the frontend project root:
+
+```bash
+# 1. Install dependencies
 npm install
-```
+# or
+# pnpm install
+# or
+# yarn install
 
-2. **Configure environment**
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your backend API URL:
-```env
-VITE_API_BASE_URL=http://localhost:8000/api/v1
-```
-
-3. **Start development server**
-```bash
+# 2. Run the dev server (hot-reload)
 npm run dev
+
+# 3. Open the app in your browser (default Vite dev server URL)
+# usually http://127.0.0.1:5173 or printed by the dev server
 ```
 
-The application will be available at `http://localhost:5173`
+If you use a proxy to avoid CORS during development, configure it in Vite config or package.json as needed.
 
-### Build for Production
+---
+
+## 📦 Build & Preview (Production)
 
 ```bash
-# Build optimized production bundle
+# Build production assets
 npm run build
 
-# Preview production build locally
+# Serve a local preview (optional)
 npm run preview
 ```
 
-The built files will be in the `dist/` directory.
+After building, the dist/ (or build/) folder contains static assets to be served by your static host or webserver.
 
-## 📁 Project Structure
+---
 
-```
-frontend/
-├── src/
-│   ├── api/                    # API service layer
-│   │   ├── ApiService.js       # Main API client
-│   │   ├── ApiSyncService.js   # Sync operations
-│   │   ├── ResourceService.js  # Resource CRUD
-│   │   ├── AuthService.js      # Authentication
-│   │   ├── LogService.js       # Log retrieval
-│   │   └── config.js           # API configuration
-│   │
-│   ├── components/             # Reusable components
-│   │   ├── layout/            # Layout components (AdminLayout, etc.)
-│   │   ├── page_components/   # Page-specific components
-│   │   └── ui/                # UI primitives (Button, Input, etc.)
-│   │
-│   ├── contexts/              # React contexts
-│   │   └── AuthContext.jsx    # Authentication state
-│   │
-│   ├── hooks/                 # Custom React hooks
-│   │   ├── auth/             # Auth hooks (useLogin, useLogout)
-│   │   ├── books/            # Book hooks (useSearchBooks, useFeaturedBooks)
-│   │   ├── dashboard/        # Dashboard hooks (useDashboardStats)
-│   │   ├── resources/        # Resource hooks (useResources, useSyncResource)
-│   │   ├── useDebounce.js    # Debounce hook
-│   │   ├── useKeyRedirect.js # Keyboard shortcuts
-│   │   └── useNotification.jsx # Toast notifications
-│   │
-│   ├── pages/                 # Page components
-│   │   ├── admin/            # Admin pages
-│   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── AdminLoginPage.jsx
-│   │   │   ├── ResourcePage.jsx
-│   │   │   ├── FeaturedBooksPage.jsx
-│   │   │   ├── LogsPage.jsx
-│   │   │   ├── CreateApiResourcePage.jsx
-│   │   │   ├── EditApiResourcePage.jsx
-│   │   │   └── CreateRedirectResourcePage.jsx
-│   │   ├── SearchPage.jsx    # Main search page
-│   │   ├── SourcePage.jsx    # Resource detail page
-│   │   └── NotFoundPage.jsx  # 404 page
-│   │
-│   ├── routes/               # Routing configuration
-│   │   ├── AppRoute.jsx      # Main route definitions
-│   │   └── ProtectedRoute.jsx # Auth route guard
-│   │
-│   ├── utils/                # Utility functions
-│   ├── App.jsx               # Root component
-│   ├── main.jsx              # Entry point
-│   └── index.css             # Global styles
-│
-├── public/                   # Static assets
-├── index.html                # HTML template
-├── vite.config.js            # Vite configuration
-├── tailwind.config.js        # TailwindCSS configuration
-├── eslint.config.js          # ESLint configuration
-└── package.json              # Dependencies and scripts
-```
+## ✅ Additional Notes
 
-## 🎨 Key Features
+- CORS: Ensure the backend allows the frontend origin (dev and production) to access API endpoints. Update backend CORS settings if you see CORS errors.
+- API base path: The frontend expects API endpoints under `/api/v1/*`. If your backend uses a different prefix, update VITE_API_BASE_URL accordingly.
+- Authentication: Token-based auth (Bearer) or cookies depend on backend implementation. Match the frontend auth method to backend middleware.
+- Environment caching: When changing `.env`, restart the dev server to pick up changes.
 
-### Public Pages
-- **Search Page** (`/`) - Search books across all resources
-- **Source Page** (`/source/:id`) - View resource details
+---
 
-### Admin Pages
-- **Dashboard** (`/admin/dashboard`) - System overview and statistics
-- **Resources** (`/admin/resources`) - Manage API resources and redirects
-- **Featured Books** (`/admin/featured-books`) - Curate featured collections
-- **Logs** (`/admin/logs`) - View system logs in real-time
-- **Resource Creation/Editing** - Forms for managing resources
+## 🚀 Production Deployment (Quick Reference)
 
-### Features
-- 🔍 **Advanced Search** - Multi-field book search with filters
-- 🔄 **Real-time Sync** - Live sync status updates with adaptive polling
-- 📊 **Dashboard Analytics** - System statistics and metrics
-- 📝 **Log Viewer** - Real-time log monitoring
-- 🎨 **Responsive Design** - Mobile-friendly interface
-- ⚡ **Fast Performance** - Optimized with React Query caching
-- 🔐 **Protected Routes** - Secure admin access
-- 🎯 **Keyboard Shortcuts** - Quick navigation (Ctrl + ` for admin login)
+### Option 1: Docker (Recommended)
 
-## 🛠️ Technology Stack
+See the [Docker Setup](#🐳-docker-setup-recommended-for-production) section above for detailed instructions.
 
-- **React 18.x** - UI library
-- **Vite** - Build tool and dev server
-- **TailwindCSS** - Utility-first CSS framework
-- **React Router** - Client-side routing
-- **React Query** - Server state management
-- **Axios** - HTTP client
-- **Lucide React** - Icon library
-
-## 🧩 State Management
-
-### Server State (React Query)
-The application uses React Query for all server state management:
-- Automatic caching and background updates
-- Optimistic updates
-- Request deduplication
-- Automatic retries
-
-Example hooks:
-- `useResources()` - Fetch and cache resources
-- `useSearchBooks()` - Search books with automatic caching
-- `useSyncResourceMutation()` - Trigger resource sync
-
-### Global State (Context API)
-- **AuthContext** - Authentication state and user info
-- Minimal global state, most state is server-managed
-
-### Local State (useState/useReducer)
-- Component-specific UI state (modals, forms, etc.)
-
-## 🔌 API Integration
-
-The frontend communicates with the Laravel backend via REST API:
-
-### API Service Architecture
-```javascript
-// api/config.js - Base configuration
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// api/ResourceService.js - Resource operations
-export async function getActiveApiResources(params, auth) {
-  // Fetch resources with filters
-}
-
-// api/ApiSyncService.js - Sync operations
-export async function syncResource(resourceId, auth) {
-  // Trigger resource sync
-}
-```
-
-### Custom Hooks Pattern
-```javascript
-// hooks/resources/useResources.js
-export const useResources = (params, options) => {
-  return useQuery({
-    queryKey: ["resources", params],
-    queryFn: () => getActiveApiResources(params, getAuth()),
-    ...options
-  });
-};
-```
-
-## 🎯 Development Guidelines
-
-### Code Style
-- Follow React best practices and hooks rules
-- Use functional components with hooks
-- Implement proper error boundaries
-- Use proper TypeScript types (if migrating to TS)
-
-### Component Structure
-```javascript
-// 1. Imports
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-// 2. Component definition
-const MyComponent = ({ prop1, prop2 }) => {
-  // 3. Hooks
-  const { data, isLoading } = useQuery(...);
-  const [state, setState] = useState();
-  
-  // 4. Event handlers
-  const handleClick = () => { ... };
-  
-  // 5. Render
-  return ( ... );
-};
-
-// 6. Export
-export default MyComponent;
-```
-
-### Adding a New Page
-
-1. Create page component in `src/pages/` or `src/pages/admin/`
-2. Add route in `src/routes/AppRoute.jsx`
-3. Create necessary API services in `src/api/`
-4. Create custom hooks in `src/hooks/`
-5. Add to navigation if needed
-
-### Adding a New API Endpoint
-
-1. Add service function in `src/api/[Service].js`
-2. Create React Query hook in `src/hooks/[category]/`
-3. Use hook in component
-
-Example:
-```javascript
-// api/ResourceService.js
-export async function getResource(id, auth) {
-  const res = await fetch(`${API_BASE_URL}/resources/${id}`, {
-    headers: createAuthHeaders(auth.username, auth.password)
-  });
-  return res.json();
-}
-
-// hooks/resources/useResource.js
-export const useResource = (id) => {
-  return useQuery({
-    queryKey: ["resource", id],
-    queryFn: () => getResource(id, getAuth())
-  });
-};
-
-// Component usage
-const { data, isLoading, error } = useResource(resourceId);
-```
-
-## 🧪 Scripts
-
+Quick command:
 ```bash
-# Development
-npm run dev          # Start dev server with HMR
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run ESLint
-
-# Deployment
-npm run build        # Build optimized bundle
+docker compose up -d
 ```
 
-## 🌐 Environment Variables
+### Option 2: Manual Build & Deployment
 
-Create a `.env` file in the frontend directory:
+1. Build optimized static assets:
 
-```env
-# Backend API URL
-VITE_API_BASE_URL=http://localhost:8000/api/v1
+    ```bash
+    npm run build
+    ```
 
-# Optional: Additional configuration
-VITE_APP_NAME=ValACE
-```
+2. Serve the built assets with any static server or integrate into your web host (NGINX, Netlify, Vercel, S3 + CloudFront).
 
-## 🔐 Authentication
-
-Admin authentication uses Basic Auth:
-- Login page: `/admin/login`
-- Credentials stored in AuthContext
-- Protected routes redirect to login if unauthenticated
-- Keyboard shortcut: `Ctrl + `` for quick admin access
-
-## 📱 Responsive Design
-
-The application is fully responsive:
-- Mobile-first approach
-- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
-- Responsive navigation and layouts
-- Touch-friendly UI elements
-
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-npm run build
-```
-
-### Deploy to Web Server
-
-1. Build the application (`npm run build`)
-2. Upload `dist/` folder contents to web server
-3. Configure web server to serve `index.html` for all routes
-
-### Nginx Configuration
+Example NGINX snippet:
 
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
-    root /path/to/dist;
+    server_name example.com;
+    root /var/www/opac-frontend/dist;
 
     location / {
         try_files $uri $uri/ /index.html;
     }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 }
 ```
 
-### Environment Configuration
+3. Ensure the backend API is accessible from the deployed frontend origin and CORS is configured appropriately.
 
-Set `VITE_API_BASE_URL` to production API URL before building:
+---
 
-```env
-VITE_API_BASE_URL=https://api.your-domain.com/api/v1
-```
+## 🔍 Troubleshooting
 
-## 📚 Additional Resources
+### Local Development Issues
 
-- [Main Documentation](../README.md) - Complete project documentation
-- [Backend README](../backend/README.md) - Backend setup guide
-- [API Documentation](../backend/API_DOCUMENTATION.md) - API reference
-- [React Documentation](https://react.dev) - React official docs
-- [Vite Documentation](https://vitejs.dev) - Vite official docs
-- [TailwindCSS](https://tailwindcss.com) - TailwindCSS docs
+- Dev server not starting: check Node version and package manager, delete node_modules and reinstall.
+- API errors / 401: confirm authentication tokens and backend middleware configuration.
 
-## 🤝 Contributing
+### Docker Issues
 
-1. Follow the existing code style and patterns
-2. Write descriptive commit messages
-3. Test thoroughly before submitting
-4. Update documentation as needed
-
-## 📄 License
-
-This project is part of the ValACE New OPAC system. See main project LICENSE for details.
+- **Container not building**: Ensure `.env` file exists and contains all required variables
+- **Port 3001 already in use**: Change the host port in `docker-compose.yml`:
+  ```yaml
+  ports:
+    - "8080:80"  # Change 3001 to any available port
+  ```
+- **Changes not reflected**: Rebuild the container with `docker compose up -d --build`
+- **Container crashes**: Check logs with `docker compose logs frontend`
+- **Permission denied**: Run with `sudo` or add your user to the docker group
