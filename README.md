@@ -102,6 +102,31 @@ docker-compose.yml          # Service orchestration
 3. Access the application:
     - Frontend: `http://localhost:3001`
 
+### Modifying the Port
+
+If you need to change the port because `3001` is already in use, you can edit the `docker-compose.yml` file.
+
+1.  Open `docker-compose.yml`.
+2.  Locate the `ports` section under the `frontend` service.
+3.  Change the first value (the "host port") to an available port.
+
+    For example, to change the port from `3001` to `3002`:
+
+    ```yaml
+    # docker-compose.yml
+    services:
+      frontend:
+        # ...
+        ports:
+          - "3002:80" # Changed 3001 to 3002
+        # ...
+    ```
+4.  Save the file and restart the container:
+    ```bash
+    docker compose up -d --build
+    ```
+    You can now access the application at `http://localhost:3002`.
+
 4. View logs:
 
     ```bash
