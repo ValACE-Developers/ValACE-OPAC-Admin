@@ -17,9 +17,10 @@ services:
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - valace_network
+      - valace-opac-network
     restart: unless-stopped
 
 networks:
-  valace_network:
-    driver: bridge
+  valace-opac-network:
+    name: valace_opac_shared_network
+    external: true     # <--- IMPORTANT: Tells Docker this network already exists
