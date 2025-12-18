@@ -46,9 +46,11 @@ Ensure the API server (backend) is running before using the frontend.
 2. Edit `.env` and set these important variables (Vite-style `VITE_` prefix is required for variables exposed to client code):
 
     - VITE_API_BASE_URL — Base URL for backend API (e.g. `http://127.0.0.1:8000/api/v1`)
+    - VITE_COCE_SERVER_URL — URL for Coce server (book covers), use `/cover` for proxy
     - VITE_USERNAME — Basic auth username for API requests (must match backend credentials)
     - VITE_PASSWORD — Basic auth password for API requests (must match backend credentials)
-    - VITE_SYSTEM_LOGS_URL — URL for system logs
+    - VITE_SYSTEM_LOGS_URL — URL for system logs (e.g. `http://127.0.0.1:8000/admin/logs`)
+    - VITE_JOB_MONITORING_URL — URL for job monitoring (e.g. `http://127.0.0.1:8000/admin/jobs`)
     - VITE_TEST_MODE — Enable test mode
     - VITE_ENVIRONMENT — Set environment (development/production)
 
@@ -58,8 +60,10 @@ Ensure the API server (backend) is running before using the frontend.
     ```bash
     VITE_USERNAME="username_of_basic_auth_api"
     VITE_PASSWORD="password_of_basic_auth_api"
-    VITE_API_BASE_URL="base_url_of_backend_api"
-    VITE_SYSTEM_LOGS_URL="http://127.0.0.1:8000/logs"
+    VITE_API_BASE_URL="http://127.0.0.1:8000/api/v1"
+    VITE_COCE_SERVER_URL="/cover"
+    VITE_SYSTEM_LOGS_URL="http://127.0.0.1:8000/admin/logs"
+    VITE_JOB_MONITORING_URL="http://127.0.0.1:8000/admin/jobs"
     VITE_TEST_MODE="true"
     VITE_ENVIRONMENT="development"
     ```
@@ -158,9 +162,11 @@ The `Dockerfile` uses a **multi-stage build**:
 Environment variables are passed from your `.env` file to the Docker build:
 
 - `VITE_API_BASE_URL` - Backend API URL
+- `VITE_COCE_SERVER_URL` - URL for Coce server (book covers)
 - `VITE_USERNAME` - API authentication username
 - `VITE_PASSWORD` - API authentication password
 - `VITE_SYSTEM_LOGS_URL` - URL for system logs
+- `VITE_JOB_MONITORING_URL` - URL for job monitoring
 - `VITE_TEST_MODE` - Enable test mode
 - `VITE_ENVIRONMENT` - Set environment
 
@@ -177,6 +183,9 @@ Edit `docker/nginx/default.conf` to customize:
 - Port configuration
 - Routing rules
 - Security headers
+- Proxy configurations (e.g., `/cover` for Coce server)
+
+The default configuration includes a proxy for the Coce server (book cover service) at `/cover` endpoint.
 
 After changes, rebuild and restart:
 

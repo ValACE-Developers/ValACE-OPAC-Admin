@@ -5,7 +5,8 @@ import {
     Star,
     Home,
     SignalHigh,
-    FileText
+    FileText,
+    Activity
 } from "lucide-react";
 import { LOGO_IMAGE } from "@/constants/asset";
 
@@ -29,6 +30,11 @@ const NAVIGATION_ITEMS = [
         path: "/admin/sys-logs",
         label: "System Logs",
         icon: <FileText className="w-5 h-5" />,
+    },
+    {
+        path: "/admin/job-monitor",
+        label: "Job Monitor",
+        icon: <Activity className="w-5 h-5" />,
     },
     // {
     //     path: "/admin/resources",

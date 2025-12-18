@@ -22,7 +22,7 @@ export const AdminLayout = () => {
 
             {/* Main Content */}
             <div className="ml-64 min-h-screen">
-                <main className="p-6" aria-labelledby="admin-main">
+                <main className="p-2" aria-labelledby="admin-main">
                     <Outlet />
                 </main>
             </div>

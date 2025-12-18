@@ -1,9 +1,22 @@
+import { useState, useEffect } from "react";
 import { DEFAULT_COVER } from "@/constants/asset";
+import { getBookCoverUrl } from "@/utils";
 import { X, User, ExternalLink } from "lucide-react";
 import { formatDate } from "@/utils/dateFormatter";
 import { useTransition, animated } from '@react-spring/web';
 
 export const BookInfoModal = ({ isOpen, onClose, book }) => {
+    const [bookCover, setBookCover] = useState(book?.thumbnail || DEFAULT_COVER);
+
+    useEffect(() => {
+        const loadCover = async () => {
+            if (book) {
+                const url = await getBookCoverUrl(book);
+                setBookCover(url);
+            }
+        };
+        loadCover();
+    }, [book]);
 
     const transition = useTransition(isOpen, {
         from: { opacity: 0, transform: 'scale(0.95)' },
@@ -11,8 +24,6 @@ export const BookInfoModal = ({ isOpen, onClose, book }) => {
         leave: { opacity: 0, transform: 'scale(0.95)' },
         config: { tension: 300, friction: 30 },
     });
-
-    const bookCover = book?.thumbnail || DEFAULT_COVER;
     const bookTitle = book?.title || "Book Title";
     const bookAuthor = book?.authors || "Book Author";
     const bookDescription = book?.description || "No description available.";

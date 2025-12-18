@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 
-export const SystemLogs = () => {
+export const JobMonitorPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {
@@ -24,9 +24,9 @@ export const SystemLogs = () => {
       </button>
       <iframe
         key={refreshKey}
-        src={import.meta.env.VITE_SYSTEM_LOGS_URL}
+        src={import.meta.env.VITE_JOB_MONITORING_URL}
         className="w-full h-full border-0"
-        title="System Logs"
+        title="Job Monitor"
       />
     </div>
   );

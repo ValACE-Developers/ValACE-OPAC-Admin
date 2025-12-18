@@ -1,6 +1,40 @@
+import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT_COVER } from "../../utils/defaultImageCover";
+import { getBookCoverUrl } from "@/utils";
+
+const BookItem = ({ book, index }) => {
+	const [coverUrl, setCoverUrl] = useState(book.thumbnail || DEFAULT_COVER);
+
+	useEffect(() => {
+		const loadCover = async () => {
+			const url = await getBookCoverUrl(book);
+			setCoverUrl(url);
+		};
+		loadCover();
+	}, [book]);
+
+	return (
+		<div
+			key={book.book_cache_id || index}
+			className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} flex items-start gap-4 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
+		>
+			<img 
+				src={coverUrl} 
+				alt={`${book.title} cover`} 
+				className="h-32 w-24 object-cover rounded flex-shrink-0"
+				onError={(e) => {
+					e.target.src = DEFAULT_COVER;
+				}}
+			/>
+			<div className="flex-1 min-w-0">
+				<h2 className="text-lg font-semibold text-[#00104A] mb-2 line-clamp-2">{book.title}</h2>
+				<p className="text-sm text-gray-600 line-clamp-3">{book.description || 'No description available'}</p>
+			</div>
+		</div>
+	);
+};
 
 export const ListDisplay = ({ collectionTitle, collections, collectionLink, isLoading = false, isError, error }) => {
 	const navigate = useNavigate();
@@ -25,20 +59,9 @@ export const ListDisplay = ({ collectionTitle, collections, collectionLink, isLo
 				{isLoading ? (
 					<SkeletonLoader />
 				) : collections && collections.length > 0 ? (
-					collections.map((book, index) => {
-						return (
-							<div
-								key={book.book_cache_id || index}
-								className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} flex items-start gap-4 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
-							>
-								<img src={book.thumbnail || DEFAULT_COVER} alt={`${book.title} cover`} className="h-32 w-24 object-cover rounded flex-shrink-0" />
-								<div className="flex-1 min-w-0">
-									<h2 className="text-lg font-semibold text-[#00104A] mb-2 line-clamp-2">{book.title}</h2>
-									<p className="text-sm text-gray-600 line-clamp-3">{book.description || 'No description available'}</p>
-								</div>
-							</div>
-						);
-					})
+					collections.map((book, index) => (
+						<BookItem key={book.book_cache_id || index} book={book} index={index} />
+					))
 				) : (
 					<div className="flex justify-center items-center h-full">
 						<div className="text-center">

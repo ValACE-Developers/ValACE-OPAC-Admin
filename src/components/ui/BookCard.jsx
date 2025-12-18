@@ -1,13 +1,27 @@
-import { DEFAULT_COVER } from "@/utils";
+import { useState, useEffect } from "react";
+import { DEFAULT_COVER, getBookCoverUrl } from "@/utils";
 
 export const BookCard = ({ book }) => {
+    const [coverUrl, setCoverUrl] = useState(book?.thumbnail || DEFAULT_COVER);
+
+    useEffect(() => {
+        const loadCover = async () => {
+            const url = await getBookCoverUrl(book);
+            setCoverUrl(url);
+        };
+        loadCover();
+    }, [book]);
+
     return (
         <>
             <div className="w-[250px] h-[300px] bg-white flex items-center justify-center">
                 <img
-                    src={book?.thumbnail || DEFAULT_COVER}
+                    src={coverUrl}
                     alt={book?.title || "Book cover"}
                     className="h-full w-full object-cover"
+                    onError={(e) => {
+                        e.target.src = DEFAULT_COVER;
+                    }}
                 />
             </div>
             <div className="p-1 w-full text-center max-w-[200px]">

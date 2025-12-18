@@ -12,6 +12,7 @@ import {
     FeaturedBooksPage,
     ReportsPage,
     SystemLogs,
+    JobMonitorPage,
     ResourcePage,
     ExternalResourcePage,
     ChooseResourceTypePage,
@@ -59,6 +60,7 @@ const AppRoute = () => {
                         <Route path="reports" element={<ReportsPage />}/>
                         <Route path="featured-books" element={<FeaturedBooksPage />} />
                         <Route path="sys-logs" element={<SystemLogs />} />
+                        <Route path="job-monitor" element={<JobMonitorPage />} />
                         {/* <Route path="resources" element={<ResourcePage />} />
                         <Route path="resources/choose" element={<ChooseResourceTypePage />} />
                         <Route path="resources/create/api" element={<CreateApiResourcePage />} />
